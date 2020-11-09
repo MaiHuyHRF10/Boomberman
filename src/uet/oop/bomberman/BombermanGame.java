@@ -35,15 +35,14 @@ public class BombermanGame extends Application {
     public static char[][] map = new char[HEIGHT][WIDTH];
     private List<Entity> entities = new ArrayList<>();
     private List<Entity> stillObjects = new ArrayList<>();
-    Bomber player;
-
+    private Bomber player;
+    private Bomb bomb = new Bomb();
 
     private double speedOfPlayer = 0.05;
 
     public static void main(String[] args) throws FileNotFoundException {
         Application.launch(BombermanGame.class);
     }
-
 
 
     @Override
@@ -90,7 +89,7 @@ public class BombermanGame extends Application {
 
     public void createMap() throws FileNotFoundException {
 
-        Scanner scanner = new Scanner(new File("C:\\Users\\DELL\\OneDrive\\Máy tính\\Boomberman\\res\\levels\\Level1.txt"));
+        Scanner scanner = new Scanner(new File("C:\\Users\\Bui Loan\\IdeaProjects\\Boomberman\\res\\levels\\Level1.txt"));
         int row = 0;
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -117,15 +116,17 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
-            entities.forEach(Entity::update);
+        entities.forEach(Entity::update);
+        bomb.update();
+
     }
 
 
     public void render() {
         gcForPlayer.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         entities.forEach(g -> g.render(gcForPlayer));
+        bomb.render(gcForPlayer);
     }
-
 
 
     public void creatKeyListener() {
@@ -145,6 +146,8 @@ public class BombermanGame extends Application {
                     case DOWN:
                         player.setDownKeyPress(true);
                         break;
+                    case SPACE:
+                        bomb = new Bomb((int) player.getX(), (int) player.getY(), false, Sprite.bomb.getFxImage());
                 }
             }
         });

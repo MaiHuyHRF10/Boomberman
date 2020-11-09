@@ -12,8 +12,11 @@ public abstract class movingObj extends Entity {
 
 
     public abstract void moveRight();
+
     public abstract void moveLeft();
+
     public abstract void moveUp();
+
     public abstract void moveDown();
 
 }

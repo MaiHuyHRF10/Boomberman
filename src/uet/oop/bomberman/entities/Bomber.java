@@ -1,37 +1,28 @@
 package uet.oop.bomberman.entities;
 
-import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 public class Bomber extends movingObj {
 
+    Image[] imgFrameRight;
+    Image[] imgFrameLeft;
+    Image[] imgFrameUp;
+    Image[] imgFrameDown;
     private int left = 0;
     private int right = 0;
     private int up = 0;
     private int down = 0;
-    private int animate = 5;
-
+    private final int animate = 5;
     private boolean isLeftKeyPress = false;
     private boolean isRightKeyPress = false;
     private boolean isUpKeyPress = false;
     private boolean isDownKeyPress = false;
 
-    Image []imgFrameRight;
-    Image []imgFrameLeft;
-    Image []imgFrameUp;
-    Image []imgFrameDown;
-
 
     public Bomber(double x, double y, Image img, double speed) {
-        super( x, y, img, speed);
+        super(x, y, img, speed);
         setFrameRight();
         setFrameLeft();
         setFrameUp();
@@ -53,7 +44,6 @@ public class Bomber extends movingObj {
     public void setUpKeyPress(boolean status) {
         this.isUpKeyPress = status;
     }
-
 
 
     private void setFrameRight() {
@@ -192,8 +182,8 @@ public class Bomber extends movingObj {
     }
 
     public void checkToMapMoveRight() {
-        double widthFrameNow = 0;
-        if (right  < animate) {
+        double widthFrameNow;
+        if (right < animate) {
             widthFrameNow = 20.0;
         } else if (right < 2 * animate) {
             widthFrameNow = 22.0;

@@ -195,12 +195,28 @@ public class Bomber extends movingObj {
         int xPos = (int) (x + speed);
         int xPos2 = (int) (x + speed + distance);
 
-        int yPos = (int) (y + 0.12);
-        int yPos2 = (int) (y + 1 - 0.12);
+        int yPos = (int) y;
+        int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos][xPos2] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                this.x = xPos2 - distance;
+                if (BombermanGame.map[(int) y][(int) (x + 1)] != ' ') {
+                    if (y == (int) y) {
+                        this.x = xPos2 - distance;
+                    } else {
+                        if (this.y - (int) y >= 0.7) {
+                            this.y = (int) y + 1;
+                        } else {
+                            this.x = xPos2 - distance;
+                        }
+                    }
+                } else if (BombermanGame.map[(int) (y + 1)][(int) (x + 1)] != 0) {
+                    if (this.y - (int) y <= 0.3) {
+                        this.y = (int) y;
+                    } else {
+                        this.x = xPos2 - distance;
+                    }
+                }
             }
         }
     }
@@ -208,12 +224,21 @@ public class Bomber extends movingObj {
     public void checkToMapMoveLeft() {
         int xPos = (int) (x - speed);
 
-        int yPos = (int) (y + 0.12);
-        int yPos2 = (int) (y + 1 - 0.12);
+        int yPos = (int) y;
+        int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos][xPos] != ' ' || BombermanGame.map[yPos2][xPos] != ' ') {
-                this.x = xPos + 1;
+                if (BombermanGame.map[(int) (y + 1)][(int) (x - 1)] != ' ') {
+                    if (this.y - (int) y <= 0.3) {
+                        this.y = (int) y;
+                    } else {
+                        this.x = xPos + 1;
+                    }
+                } else if (BombermanGame.map[(int) (y)][(int) (x - 1)] != ' ') {
+                    this.x = xPos + 1;
+                }
+
             }
         }
     }

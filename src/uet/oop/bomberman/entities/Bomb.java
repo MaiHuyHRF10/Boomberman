@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 public class Bomb extends Entity {
 
     protected double timeToExplode = 120;
-    protected int timeAfter = 20;
+    protected int timeAfter = 40;
     protected boolean exploded = false;
     protected DirectionExplosion[] explosions = null;
     private int animate = 0;

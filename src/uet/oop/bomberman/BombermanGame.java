@@ -145,9 +145,11 @@ public class BombermanGame extends Application {
             switch (event.getCode()) {
                 case LEFT:
                     player.setLeftKeyPress(false);
+                    player.setImg(Sprite.player_left.getFxImage());
                     break;
                 case RIGHT:
                     player.setRightKeyPress(false);
+                    player.setImg(Sprite.player_right.getFxImage());
                     break;
                 case UP:
                     player.setUpKeyPress(false);

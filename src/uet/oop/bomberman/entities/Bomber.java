@@ -229,33 +229,54 @@ public class Bomber extends movingObj {
 
         if (xPos >= 0 && xPos < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos][xPos] != ' ' || BombermanGame.map[yPos2][xPos] != ' ') {
-                if (BombermanGame.map[(int) (y + 1)][(int) (x - 1)] != ' ') {
+                if (BombermanGame.map[(int) y][(int) (x - speed)] != ' ') {
+                    if (this.y == (int) y) {
+                        this.x = xPos + 1;
+                    } else {
+                        if (this.y - (int) y >= 0.7) {
+                            this.y = (int) y + 1;
+                        } else {
+                            this.x = xPos + 1;
+                        }
+                    }
+                } else if (BombermanGame.map[(int) (y + 1)][(int) (x - speed)] != ' ') {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
                         this.x = xPos + 1;
                     }
-                } else if (BombermanGame.map[(int) (y)][(int) (x - 1)] != ' ') {
-                    this.x = xPos + 1;
                 }
-
             }
         }
     }
+
 
     public void checkToMapMoveUp() {
         double widthFrameNow = 24;
 
         double distance = widthFrameNow / (double) Sprite.SCALED_SIZE;
-        int xPos = (int) (x + 0.1);
-        int xPos2 = (int) (x + distance - 0.1);
+        int xPos = (int) x;
+        int xPos2 = (int) (x + distance);
 
         int yPos = (int) (y);
         int yPos2 = (int) (y - speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                this.y = yPos2 + 1;
+                if (BombermanGame.map[yPos2][(int) x] != ' ') {
+                    if (this.x - (int) x >= 0.7) {
+                        this.x = (int) x + 1;
+                    } else {
+                        this.y = yPos2 + 1;
+                    }
+                } else if (BombermanGame.map[yPos2][(int) (x + 1)] != ' ') {
+                    if (this.x - (int) x <= 0.45) {
+                        this.x = (int) (x + 1) - distance;
+                    } else {
+                        this.y = yPos2 + 1;
+                    }
+                }
+
             }
         }
     }
@@ -263,15 +284,27 @@ public class Bomber extends movingObj {
     public void checkToMapMoveDown() {
         double widthFrameNow = 24.0;
         double distance = widthFrameNow / (double) Sprite.SCALED_SIZE;
-        int xPos = (int) (x + 0.1);
-        int xPos2 = (int) (x + distance - 0.1);
+        int xPos = (int) x;
+        int xPos2 = (int) (x + distance);
 
         int yPos = (int) (y + speed);
         int yPos2 = (int) (y + 1 + speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                this.y = yPos;
+                if (BombermanGame.map[(int) (y + 1)][(int) (x)] != ' ') {
+                    if (this.x - (int) x >= 0.7) {
+                        this.x = (int) x + 1;
+                    } else {
+                        this.y = yPos;
+                    }
+                } else if (BombermanGame.map[(int) (y + 1)][(int) (x + 1)] != ' ') {
+                    if (this.x - (int) x <= 0.45) {
+                        this.x = (int) (x + 1) - distance;
+                    } else {
+                        this.y = yPos;
+                    }
+                }
             }
         }
     }

@@ -200,7 +200,7 @@ public class Bomber extends movingObj {
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos][xPos2] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[(int) y][(int) (x + 1)] != ' ') {
+                if (BombermanGame.map[(int) y][xPos2] != ' ') {
                     if (y == (int) y) {
                         this.x = xPos2 - distance;
                     } else {
@@ -210,7 +210,7 @@ public class Bomber extends movingObj {
                             this.x = xPos2 - distance;
                         }
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][(int) (x + 1)] != 0) {
+                } else if (BombermanGame.map[(int) (y + 1)][xPos2] != 0) {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
@@ -229,7 +229,7 @@ public class Bomber extends movingObj {
 
         if (xPos >= 0 && xPos < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos][xPos] != ' ' || BombermanGame.map[yPos2][xPos] != ' ') {
-                if (BombermanGame.map[(int) y][(int) (x - speed)] != ' ') {
+                if (BombermanGame.map[(int) y][xPos] != ' ') {
                     if (this.y == (int) y) {
                         this.x = xPos + 1;
                     } else {
@@ -239,7 +239,7 @@ public class Bomber extends movingObj {
                             this.x = xPos + 1;
                         }
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][(int) (x - speed)] != ' ') {
+                } else if (BombermanGame.map[(int) (y + 1)][xPos] != ' ') {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
@@ -263,15 +263,15 @@ public class Bomber extends movingObj {
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[yPos2][(int) x] != ' ') {
+                if (BombermanGame.map[yPos2][xPos] != ' ') {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos2 + 1;
                     }
-                } else if (BombermanGame.map[yPos2][(int) (x + 1)] != ' ') {
+                } else if (BombermanGame.map[yPos2][xPos2] != ' ') {
                     if (this.x - (int) x <= 0.45) {
-                        this.x = (int) (x + 1) - distance;
+                        this.x = (int) x + 1 - distance;
                     } else {
                         this.y = yPos2 + 1;
                     }
@@ -292,15 +292,15 @@ public class Bomber extends movingObj {
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
             if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[(int) (y + 1)][(int) (x)] != ' ') {
+                if (BombermanGame.map[(int) (y + 1)][xPos] != ' ') {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos;
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][(int) (x + 1)] != ' ') {
+                } else if (BombermanGame.map[(int) (y + 1)][xPos2] != ' ') {
                     if (this.x - (int) x <= 0.45) {
-                        this.x = (int) (x + 1) - distance;
+                        this.x = (int) x + 1 - distance;
                     } else {
                         this.y = yPos;
                     }

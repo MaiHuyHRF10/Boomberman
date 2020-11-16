@@ -8,7 +8,7 @@ public abstract class Entity {
     protected double x;
     protected double y;
     protected Image img;
-
+    protected boolean remove = false;
     public Entity() {
     }
 
@@ -42,6 +42,9 @@ public abstract class Entity {
         this.img = img;
     }
 
+    public void setRemove(boolean remove) {
+        this.remove = remove;
+    }
     public void render(GraphicsContext gc) {
         gc.drawImage(this.img, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
     }

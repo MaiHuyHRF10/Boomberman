@@ -9,13 +9,14 @@ import java.util.stream.IntStream;
 public class Bomb extends Entity {
 
     protected double timeToExplode = 120;
-    protected int timeAfter = 40;
+    protected int timeAfter = 30;
     protected boolean exploded = false;
     protected DirectionExplosion[] explosions = null;
     private int animate = 0;
-    private boolean remove = true;
+
 
     public Bomb() {
+        remove = true;
     }
 
     public Bomb(double x, double y, boolean remove, Image img) {
@@ -34,12 +35,11 @@ public class Bomb extends Entity {
                     explosion();
                 if (timeAfter > 0) {
                     timeAfter--;
+                    updateExplosions();
                 } else {
                     remove = true;
                 }
 
-                //else
-                // updateExplosions();
 
             }
 
@@ -59,6 +59,12 @@ public class Bomb extends Entity {
         }
     }
 
+    public void updateExplosions() {
+            for (int i = 0; i < explosions.length; i++) {
+                explosions[i].update(timeAfter);
+            }
+    }
+
     @Override
     public void render(GraphicsContext gc) {
         if (!exploded && !remove) {
@@ -67,7 +73,14 @@ public class Bomb extends Entity {
             animate++;
             super.render(gc);
         } else if (!remove) {
-            setImg(Sprite.bomb_exploded2.getFxImage());
+            int time = timeAfter % 30 ;
+            if (time >=20) {
+                setImg(Sprite.bomb_exploded2.getFxImage());
+            } else if (time >= 10) {
+                setImg(Sprite.bomb_exploded1.getFxImage());
+            } else {
+                setImg(Sprite.bomb_exploded.getFxImage());
+            }
             super.render(gc);
             IntStream.range(0, explosions.length).forEach(i -> explosions[i].render(gc));
         }

@@ -25,11 +25,10 @@ public class BombermanGame extends Application {
     private Canvas canvas;
     private GraphicsContext gcForPlayer;
     private Scene gameScene;
-    private final List<Entity> entities = new ArrayList<>();
+    public static List<Entity> entities = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
     private Bomber player;
     private Bomb bomb = new Bomb();
-
 
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
@@ -93,15 +92,20 @@ public class BombermanGame extends Application {
 
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
-                Entity object;
+                Entity object, object1;
                 if (map[i][j] == '#') {
                     object = new Wall(j, i, Sprite.wall.getFxImage());
-                } else if (map[i][j] == '*') {
-                    object = new Brick(j, i, Sprite.brick.getFxImage());
-                } else {
+                    stillObjects.add(object);
+                } else if (map[i][j] == ' ') {
                     object = new Grass(j, i, Sprite.grass.getFxImage());
+                    stillObjects.add(object);
+                } else {
+                    object = new Brick(j, i, Sprite.brick.getFxImage());
+                    object1 = new Grass(j, i, Sprite.grass.getFxImage());
+                    entities.add(object);
+                    stillObjects.add(object1);
                 }
-                stillObjects.add(object);
+
             }
         }
         stillObjects.forEach(g -> g.render(gc));
@@ -162,5 +166,14 @@ public class BombermanGame extends Application {
 
     }
 
+    public Entity getEntity(double x, double y) {
+        for (Entity temp : entities) {
+            if (temp.getX() == x && temp.getY() == y) return temp;
+        }
+        return null;
+    }
 
+    public List<Entity> getEntities() {
+        return entities;
+    }
 }

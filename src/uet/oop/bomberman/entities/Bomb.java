@@ -24,7 +24,6 @@ public class Bomb extends Entity {
         this.remove = remove;
     }
 
-
     @Override
     public void update() {
         if (!remove) {
@@ -39,14 +38,8 @@ public class Bomb extends Entity {
                 } else {
                     remove = true;
                 }
-
-
             }
-
-
         }
-
-
     }
 
     protected void explosion() {

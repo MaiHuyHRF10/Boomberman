@@ -2,7 +2,6 @@ package uet.oop.bomberman.entities;
 
 import uet.oop.bomberman.graphics.Sprite;
 
-
 public class Explosion extends Entity {
 
     protected boolean last;

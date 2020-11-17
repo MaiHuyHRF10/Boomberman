@@ -141,7 +141,7 @@ public class BombermanGame extends Application {
                     player.setDownKeyPress(true);
                     break;
                 case SPACE:
-                    bomb = new Bomb((int) player.getX(), (int) player.getY(), false, Sprite.bomb.getFxImage());
+                    bomb = new Bomb(player.xBomb(), player.yBomb(), false, Sprite.bomb.getFxImage());
             }
         });
 

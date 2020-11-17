@@ -308,4 +308,18 @@ public class Bomber extends movingObj {
             }
         }
     }
+
+    public int xBomb() {
+        if (this.x == (int) this.x) return (int) this.x;
+        double difference = this.x - (int) this.x;
+        return (difference >= 0.64) ? (int) this.x + 1 : (int) this.x;
+
+    }
+
+    public int yBomb() {
+        if (this.y == (int) this.y) return (int) this.y;
+        double difference = this.y - (int) this.y;
+        System.out.println(difference);
+        return (difference >= 0.64) ? (int) this.y + 1 : (int) this.y;
+    }
 }

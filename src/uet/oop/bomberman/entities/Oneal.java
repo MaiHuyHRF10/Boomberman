@@ -4,127 +4,45 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
-public class Bomber extends movingObj {
+public class Oneal extends movingObj{
 
     Image[] imgFrameRight;
     Image[] imgFrameLeft;
-    Image[] imgFrameUp;
-    Image[] imgFrameDown;
-    Image[] imgFrameDie;
     private int left = 0;
     private int right = 0;
     private int up = 0;
     private int down = 0;
-    private int time = 0; // time to die
     private final int animate = 5;
-    private boolean isLeftKeyPress = false;
-    private boolean isRightKeyPress = false;
-    private boolean isUpKeyPress = false;
-    private boolean isDownKeyPress = false;
-    private boolean alive = true;
 
-    public boolean getAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
-
-
-    public Bomber(double x, double y, Image img, double speed) {
+    public Oneal(double x, double y, Image img, double speed) {
         super(x, y, img, speed);
         setFrameRight();
         setFrameLeft();
-        setFrameUp();
-        setFrameDown();
-        setFrameDie();
     }
 
-    public void setLeftKeyPress(boolean status) {
-        this.isLeftKeyPress = status;
-    }
-
-    public void setRightKeyPress(boolean status) {
-        this.isRightKeyPress = status;
-    }
-
-    public void setDownKeyPress(boolean status) {
-        this.isDownKeyPress = status;
-    }
-
-    public void setUpKeyPress(boolean status) {
-        this.isUpKeyPress = status;
-    }
-
-
-    private void setFrameRight() {
-        Image right0 = Sprite.player_right.getFxImage();
-        Image right1 = Sprite.player_right_1.getFxImage();
-        Image right2 = Sprite.player_right_2.getFxImage();
+    public void setFrameRight() {
+        Image right0 = Sprite.oneal_right1.getFxImage();
+        Image right1 = Sprite.oneal_right2.getFxImage();
+        Image right2 = Sprite.oneal_right3.getFxImage();
         this.imgFrameRight = new Image[3];
         imgFrameRight[0] = right0;
         imgFrameRight[1] = right1;
         imgFrameRight[2] = right2;
     }
 
-    private void setFrameLeft() {
-        Image left0 = Sprite.player_left.getFxImage();
-        Image left1 = Sprite.player_left_1.getFxImage();
-        Image left2 = Sprite.player_left_2.getFxImage();
-        this.imgFrameLeft = new Image[3];
-        imgFrameLeft[0] = left0;
-        imgFrameLeft[1] = left1;
-        imgFrameLeft[2] = left2;
-    }
-
-    private void setFrameUp() {
-        Image up0 = Sprite.player_up.getFxImage();
-        Image up1 = Sprite.player_up_1.getFxImage();
-        Image up2 = Sprite.player_up_2.getFxImage();
-        this.imgFrameUp = new Image[3];
-        imgFrameUp[0] = up0;
-        imgFrameUp[1] = up1;
-        imgFrameUp[2] = up2;
-    }
-
-    private void setFrameDown() {
-        Image down0 = Sprite.player_down.getFxImage();
-        Image down1 = Sprite.player_down_1.getFxImage();
-        Image down2 = Sprite.player_down_2.getFxImage();
-        this.imgFrameDown = new Image[3];
-        imgFrameDown[0] = down0;
-        imgFrameDown[1] = down1;
-        imgFrameDown[2] = down2;
-    }
-
-    private void setFrameDie() {
-        Image die0 = Sprite.player_dead1.getFxImage();
-        Image die1 = Sprite.player_dead2.getFxImage();
-        Image die2 = Sprite.player_dead3.getFxImage();
-        this.imgFrameDie = new Image[3];
-        imgFrameDie[0] = die0;
-        imgFrameDie[1] = die1;
-        imgFrameDie[2] = die2;
+    public void setFrameLeft() {
+        Image left0 = Sprite.oneal_left1.getFxImage();
+        Image left1 = Sprite.oneal_left2.getFxImage();
+        Image left2 = Sprite.oneal_left3.getFxImage();
+        this.imgFrameRight = new Image[3];
+        imgFrameRight[0] = left0;
+        imgFrameRight[1] = left1;
+        imgFrameRight[2] = left2;
     }
 
     @Override
     public void update() {
-        if (alive) movingPlayer();
-        else {
-            if (time < 10) {
-                this.setImg(imgFrameDie[0]);
-                time++;
-            } else if (time < 20) {
-                this.setImg(imgFrameDie[1]);
-                time++;
-            } else if (time < 30) {
-                this.setImg(imgFrameDie[2]);
-                time++;
-            } else {
-                this.setImg(null);
-            }
-        }
+        movingPlayer();
     }
 
     @Override
@@ -166,13 +84,10 @@ public class Bomber extends movingObj {
     @Override
     public void moveUp() {
         if (up < animate) {
-            this.setImg(imgFrameUp[0]);
             up++;
         } else if (up < 2 * animate) {
-            this.setImg(imgFrameUp[1]);
             up++;
         } else {
-            this.setImg(imgFrameUp[2]);
             up++;
             if (up == 3 * animate) {
                 up = 0;
@@ -184,13 +99,10 @@ public class Bomber extends movingObj {
     @Override
     public void moveDown() {
         if (down < animate) {
-            this.setImg(imgFrameDown[0]);
             down++;
         } else if (down < 2 * animate) {
-            this.setImg(imgFrameDown[1]);
             down++;
         } else {
-            this.setImg(imgFrameDown[2]);
             down++;
             if (down == 3 * animate) {
                 down = 0;
@@ -200,33 +112,25 @@ public class Bomber extends movingObj {
     }
 
     public void movingPlayer() {
-        if (this.isLeftKeyPress) {
-            moveLeft();
-            checkToMapMoveLeft();
-        } else if (this.isRightKeyPress) {
-            moveRight();
-            checkToMapMoveRight();
-        } else if (this.isDownKeyPress) {
-            moveDown();
-            checkToMapMoveDown();
-        } else if (this.isUpKeyPress) {
-            moveUp();
-            checkToMapMoveUp();
+        int randomDirection = 0;
+        switch (randomDirection) {
+            case 0:
+                moveUp();
+                checkToMapMoveUp();
+                break;
+            case 1:
+                moveRight();
+                checkToMapMoveRight();
+                break;
+            case 2:
+                moveDown();
+                checkToMapMoveDown();
+                break;
+            case 3:
+                moveLeft();
+                checkToMapMoveLeft();
+                break;
         }
-
-    }
-
-    public int xBomb() {
-        if (this.x == (int) this.x) return (int) this.x;
-        double difference = this.x - (int) this.x;
-        return (difference >= 0.64) ? (int) this.x + 1 : (int) this.x;
-
-    }
-
-    public int yBomb() {
-        if (this.y == (int) this.y) return (int) this.y;
-        double difference = this.y - (int) this.y;
-        return (difference >= 0.64) ? (int) this.y + 1 : (int) this.y;
     }
 
     public void checkToMapMoveRight() {

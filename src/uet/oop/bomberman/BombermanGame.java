@@ -29,11 +29,12 @@ public class BombermanGame extends Application {
     private final List<Entity> stillObjects = new ArrayList<>();
     private Bomber player;
     private Bomb bomb = new Bomb();
+    private Balloom balloom;
+    private Oneal oneal;
 
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
     }
-
 
     @Override
     public void start(Stage stage) throws FileNotFoundException {
@@ -46,6 +47,7 @@ public class BombermanGame extends Application {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
+                collide();
                 update();
                 render();
             }
@@ -57,9 +59,11 @@ public class BombermanGame extends Application {
         creatKeyListener();
         double speedOfPlayer = 0.05;
         player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
+        balloom = new Balloom(1, 1, Sprite.balloom_right1.getFxImage(), 0.025);
+        oneal = new Oneal(25, 11, Sprite.oneal_right1.getFxImage(), 0.025);
         entities.add(player);
-
-
+        entities.add(balloom);
+        entities.add(oneal);
     }
 
     public void initializeStage() {
@@ -114,16 +118,13 @@ public class BombermanGame extends Application {
     public void update() {
         entities.forEach(Entity::update);
         bomb.update();
-
     }
-
 
     public void render() {
         gcForPlayer.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         entities.forEach(g -> g.render(gcForPlayer));
         bomb.render(gcForPlayer);
     }
-
 
     public void creatKeyListener() {
         gameScene.setOnKeyPressed(event -> {
@@ -142,6 +143,7 @@ public class BombermanGame extends Application {
                     break;
                 case SPACE:
                     bomb = new Bomb(player.xBomb(), player.yBomb(), false, Sprite.bomb.getFxImage());
+                    break;
             }
         });
 
@@ -163,7 +165,6 @@ public class BombermanGame extends Application {
                     break;
             }
         });
-
     }
 
     public Entity getEntity(double x, double y) {
@@ -175,5 +176,14 @@ public class BombermanGame extends Application {
 
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public void collide() { // collision between player and enemy;
+        double x1 = player.getX();
+        double y1 = player.getY();
+        double x2 = balloom.getX();
+        double y2 = balloom.getY();
+        if (x1 == x2 && y1 == y2)
+            player.setAlive(false);
     }
 }

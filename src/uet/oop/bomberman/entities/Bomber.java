@@ -33,6 +33,7 @@ public class Bomber extends movingObj {
         this.alive = alive;
     }
 
+
     public Bomber(double x, double y, Image img, double speed) {
         super(x, y, img, speed);
         setFrameRight();
@@ -348,21 +349,7 @@ public class Bomber extends movingObj {
         }
     }
 
-    public HashSet<String> getMask(Entity obj) {
-        HashSet<String> mask = new HashSet<String>();
 
-        int pixel, a;
-        for (int i = 0; i < img.getWidth(); i++) {
-            for (int j = 0; j < img.getHeight(); j++) {
-                pixel = obj.getImg().;
-                a = (pixel >> 24) & 0xff;
-                if (a != 0) {
-                    mask.add((obj.getX() + i) + "," + (obj.getY() - j));
-                }
-            }
-        }
-        return mask;
-    }
 
     public void collideWithEnemy(Entity obj) { // collision between player and enemy;
 //        double x1 = BombermanGame.board.getPlayer().getX();
@@ -372,34 +359,18 @@ public class Bomber extends movingObj {
 //        if (x1 > x2 - 0.75 && x1 < x2 + 0.9 && y1 > y2 - 0.9 && y1 < y2 + 0.9)
 //            BombermanGame.board.getPlayer().setAlive(false);
 //    }
-        double ax1 = this.getX();
-        double ay1 = this.getY();
-        double ax2 = ax1 + this.img.getWidth();
-        double ay2 = ay1 + this.img.getHeight();
-        double bx1 = obj.getX();
-        double by1 = obj.getY();
-        double bx2 = bx1 + obj.img.getWidth();
-        double by2 = by1 + obj.img.getHeight();
-
-        if(by2 < ay1 || ay2 < by1 || bx2 < ax1 || ax2 < bx1)
-        {
-            alive = false; // Collision is impossible.
-        }
-        else // Collision is possible.
-        {
-            // get the masks for both images
-            HashSet<String> maskPlayer1 = getMask(this);
-            HashSet<String> maskPlayer2 = getMask(obj);
-
-            maskPlayer1.retainAll(maskPlayer2);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
-
-            if(maskPlayer1.size() > 0){  // if so, than there exists at least one pixel that is the same in both images, thus
-                alive = true;
-                return;
-
+            if (alive) {
+                HashSet<String> maskPlayer1 = getMask(this);
+                HashSet<String> maskPlayer2 = getMask(obj);
+                int size = maskPlayer2.size();
+                //System.out.println(maskPlayer1.size() + " " + maskPlayer2.size());
+                maskPlayer1.retainAll(maskPlayer2);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
+                System.out.println(maskPlayer1.size() + " " + maskPlayer2.size());
+                if (maskPlayer1.size() > 0) {
+                    // if so, than there exists at least one pixel that is the same in both images, thus
+                    setAlive(false);
+                }
             }
-        }
-        alive = false;
     }
 
 }

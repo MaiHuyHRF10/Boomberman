@@ -2,6 +2,9 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import uet.oop.bomberman.graphics.Sprite;
 
 import javax.imageio.ImageIO;
@@ -59,5 +62,28 @@ public abstract class Entity<mask> {
 
     public abstract void update();
 
+    public HashSet<String> getMask(Entity go) {
+        Image imgObj = go.getImg();
+        HashSet<String> mask = null;
+        if (imgObj != null) {
+            mask = new HashSet<String>();
+            int W = (int) imgObj.getWidth();
+            int H = (int) imgObj.getHeight();
 
+            PixelReader reader = imgObj.getPixelReader();
+
+            int a;
+            for (int y = 0; y < H; y++) {
+                for (int x = 0; x < W; x++) {
+                    final int argb = reader.getArgb(x, y);
+                    a = (argb >> 24) & 0xff;
+                    //System.out.println(a);
+                    if (a != 0) {
+                        mask.add((int) (go.getX() * 32) + x + "," + ((int) (go.getY() * 32) - y)); // add the absolute x and absolute y coordinates to our set
+                    }
+                }
+            }
+        }
+        return mask;
+    }
 }

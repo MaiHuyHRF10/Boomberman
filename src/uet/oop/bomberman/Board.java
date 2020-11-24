@@ -73,7 +73,7 @@ public class Board {
     }
 
     public Bomber getPlayer() {
-        return player;
+        return this.player;
     }
 
     public void setPlayer(Bomber player) {
@@ -81,7 +81,7 @@ public class Board {
     }
 
     public Balloom getBalloom() {
-        return balloom;
+        return this.balloom;
     }
 
     public void setBalloom(Balloom balloom) {

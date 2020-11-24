@@ -17,20 +17,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BombermanGame extends Application {
-
-    public static final int WIDTH = 31;
-    public static final int HEIGHT = 13;
-    public static char[][] map = new char[HEIGHT][WIDTH];
     private GraphicsContext gc;
     private Canvas canvas;
     private GraphicsContext gcForPlayer;
     private Scene gameScene;
-    public static List<Entity> entities = new ArrayList<>();
-    private final List<Entity> stillObjects = new ArrayList<>();
-    private Bomber player;
-    private Bomb bomb = new Bomb();
-    private Balloom balloom;
-    private Oneal oneal;
+    public static Board board = new Board();
+    public static KeyBoard keyBoard;
 
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
@@ -43,34 +35,30 @@ public class BombermanGame extends Application {
         stage.setScene(gameScene);
         stage.show();
 
-
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                collide();
+                //collide();
                 update();
                 render();
             }
         };
         timer.start();
 
-        createMap();
+        initNewGame();
+        keyBoard.status(gameScene); // bat su kien
+    }
 
-        creatKeyListener();
-        double speedOfPlayer = 0.05;
-        player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
-        balloom = new Balloom(1, 1, Sprite.balloom_right1.getFxImage(), 0.025);
-        oneal = new Oneal(25, 11, Sprite.oneal_right1.getFxImage(), 0.025);
-        entities.add(player);
-        entities.add(balloom);
-        entities.add(oneal);
+    public void initNewGame() throws FileNotFoundException {
+        keyBoard = new KeyBoard();
+        board.createMapLevel1();
     }
 
     public void initializeStage() {
-        canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
+        canvas = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * Board.HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
-        Canvas canvasForPlayer = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
+        Canvas canvasForPlayer = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * Board.HEIGHT);
         gcForPlayer = canvasForPlayer.getGraphicsContext2D();
 
         Group gameRoot = new Group();
@@ -82,108 +70,23 @@ public class BombermanGame extends Application {
 
     }
 
-    public void createMap() throws FileNotFoundException {
-
-        Scanner scanner = new Scanner(new File("res/levels/Level1.txt"));
-        int row = 0;
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            for (int i = 0; i < line.length(); i++) {
-                map[row][i] = line.charAt(i);
-            }
-            row++;
-        }
-
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                Entity object, object1;
-                if (map[i][j] == '#') {
-                    object = new Wall(j, i, Sprite.wall.getFxImage());
-                    stillObjects.add(object);
-                } else if (map[i][j] == ' ') {
-                    object = new Grass(j, i, Sprite.grass.getFxImage());
-                    stillObjects.add(object);
-                } else {
-                    object = new Brick(j, i, Sprite.brick.getFxImage());
-                    object1 = new Grass(j, i, Sprite.grass.getFxImage());
-                    entities.add(object);
-                    stillObjects.add(object1);
-                }
-
-            }
-        }
-        stillObjects.forEach(g -> g.render(gc));
-    }
-
     public void update() {
-        entities.forEach(Entity::update);
-        bomb.update();
+        board.getStillObjects().forEach(g -> g.render(gc));
+        board.getEntities().forEach(Entity::update);
+        board.getPlayer().getBombs().update();
     }
 
     public void render() {
         gcForPlayer.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        entities.forEach(g -> g.render(gcForPlayer));
-        bomb.render(gcForPlayer);
-    }
-
-    public void creatKeyListener() {
-        gameScene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case LEFT:
-                    player.setLeftKeyPress(true);
-                    break;
-                case RIGHT:
-                    player.setRightKeyPress(true);
-                    break;
-                case UP:
-                    player.setUpKeyPress(true);
-                    break;
-                case DOWN:
-                    player.setDownKeyPress(true);
-                    break;
-                case SPACE:
-                    bomb = new Bomb(player.xBomb(), player.yBomb(), false, Sprite.bomb.getFxImage());
-                    break;
-            }
-        });
-
-        gameScene.setOnKeyReleased(event -> {
-            switch (event.getCode()) {
-                case LEFT:
-                    player.setLeftKeyPress(false);
-                    player.setImg(Sprite.player_left.getFxImage());
-                    break;
-                case RIGHT:
-                    player.setRightKeyPress(false);
-                    player.setImg(Sprite.player_right.getFxImage());
-                    break;
-                case UP:
-                    player.setUpKeyPress(false);
-                    break;
-                case DOWN:
-                    player.setDownKeyPress(false);
-                    break;
-            }
-        });
+        board.getEntities().forEach(g -> g.render(gcForPlayer));
+        board.getPlayer().getBombs().render(gcForPlayer);
     }
 
     public Entity getEntity(double x, double y) {
-        for (Entity temp : entities) {
+        for (Entity temp : board.getEntities()) {
             if (temp.getX() == x && temp.getY() == y) return temp;
         }
         return null;
     }
 
-    public List<Entity> getEntities() {
-        return entities;
-    }
-
-    public void collide() { // collision between player and enemy;
-        double x1 = player.getX();
-        double y1 = player.getY();
-        double x2 = balloom.getX();
-        double y2 = balloom.getY();
-        if (x1 == x2 && y1 == y2)
-            player.setAlive(false);
-    }
 }

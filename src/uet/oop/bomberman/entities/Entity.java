@@ -4,7 +4,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.graphics.Sprite;
 
-public abstract class Entity {
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+
+public abstract class Entity<mask> {
     protected double x;
     protected double y;
     protected Image img;
@@ -35,8 +42,9 @@ public abstract class Entity {
     }
 
     public Image getImg() {
-        return img;
+        return this.img;
     }
+
 
     public void setImg(Image img) {
         this.img = img;
@@ -50,4 +58,6 @@ public abstract class Entity {
     }
 
     public abstract void update();
+
+
 }

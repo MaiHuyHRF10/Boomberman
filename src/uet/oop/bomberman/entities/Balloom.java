@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -10,6 +11,7 @@ public class Balloom extends movingObj {
 
     Image[] imgFrameRight;
     Image[] imgFrameLeft;
+    Image[] imgFrameDie;
     private int left = 0;
     private int right = 0;
     private int up = 0;
@@ -120,7 +122,7 @@ public class Balloom extends movingObj {
 
             Random rd = new Random(System.currentTimeMillis()); //something like srand in C++
             int i = Math.abs(rd.nextInt()) % 4;
-            while (BombermanGame.map[_y + deltaY[i]][_x + deltaX[i]] != ' ') {
+            while (Board.map[_y + deltaY[i]][_x + deltaX[i]] != ' ') {
                 i = Math.abs(rd.nextInt()) % 4;
             }
             currentDirection = i;
@@ -157,8 +159,8 @@ public class Balloom extends movingObj {
         int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos][xPos2] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[(int) y][xPos2] != ' ') {
+            if (Board.map[yPos][xPos2] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                if (Board.map[(int) y][xPos2] != ' ') {
                     if (y == (int) y) {
                         this.x = xPos2 - distance;
                     } else {
@@ -168,7 +170,7 @@ public class Balloom extends movingObj {
                             this.x = xPos2 - distance;
                         }
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][xPos2] != 0) {
+                } else if (Board.map[(int) (y + 1)][xPos2] != 0) {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
@@ -186,8 +188,8 @@ public class Balloom extends movingObj {
         int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos][xPos] != ' ' || BombermanGame.map[yPos2][xPos] != ' ') {
-                if (BombermanGame.map[(int) y][xPos] != ' ') {
+            if (Board.map[yPos][xPos] != ' ' || Board.map[yPos2][xPos] != ' ') {
+                if (Board.map[(int) y][xPos] != ' ') {
                     if (this.y == (int) y) {
                         this.x = xPos + 1;
                     } else {
@@ -197,7 +199,7 @@ public class Balloom extends movingObj {
                             this.x = xPos + 1;
                         }
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][xPos] != ' ') {
+                } else if (Board.map[(int) (y + 1)][xPos] != ' ') {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
@@ -219,14 +221,14 @@ public class Balloom extends movingObj {
         int yPos2 = (int) (y - speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[yPos2][xPos] != ' ') {
+            if (Board.map[yPos2][xPos] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                if (Board.map[yPos2][xPos] != ' ') {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos2 + 1;
                     }
-                } else if (BombermanGame.map[yPos2][xPos2] != ' ') {
+                } else if (Board.map[yPos2][xPos2] != ' ') {
                     if (this.x - (int) x <= 0.45) {
                         this.x = (int) x + 1 - distance;
                     } else {
@@ -248,14 +250,14 @@ public class Balloom extends movingObj {
         int yPos2 = (int) (y + 1 + speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[(int) (y + 1)][xPos] != ' ') {
+            if (Board.map[yPos2][xPos] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                if (Board.map[(int) (y + 1)][xPos] != ' ') {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos;
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][xPos2] != ' ') {
+                } else if (Board.map[(int) (y + 1)][xPos2] != ' ') {
                     if (this.x - (int) x <= 0.45) {
                         this.x = (int) x + 1 - distance;
                     } else {

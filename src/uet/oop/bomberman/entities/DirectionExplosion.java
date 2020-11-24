@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 
 import java.util.stream.IntStream;
@@ -11,7 +12,6 @@ public class DirectionExplosion extends Entity {
     protected Explosion[] explosion;
     private boolean remove = false;
     boolean last;
-
     public DirectionExplosion(double x, double y, int direction) {
         this.direction = direction;
         this.x = x;
@@ -28,12 +28,12 @@ public class DirectionExplosion extends Entity {
         if (direction == 1) x1++;
         if (direction == 2) y1++;
         if (direction == 3) x1--;
-        if (BombermanGame.map[y1][x1] != '#' && BombermanGame.map[y1][x1] != '*') radius1++;
-        if (BombermanGame.map[y1][x1] == '*') {
-            for (Entity temp : BombermanGame.entities) {
+        if (Board.map[y1][x1] != '#' && Board.map[y1][x1] != '*') radius1++;
+        if (Board.map[y1][x1] == '*') {
+            for (Entity temp : BombermanGame.board.getEntities()) {
                 if (temp.getX() == x1 && temp.getY() == y1) {
                     temp.setRemove(true);
-                    BombermanGame.map[y1][x1] = ' ';
+                    Board.map[y1][x1] = ' ';
                     break;
                 }
             }

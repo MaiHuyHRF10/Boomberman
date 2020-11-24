@@ -11,7 +11,7 @@ public class Bomb extends Entity {
     protected double timeToExplode = 120;
     protected int timeAfter = 30;
     protected boolean exploded = false;
-    protected DirectionExplosion[] explosions = null;
+    protected DirectionExplosion[] explosions = new DirectionExplosion[4];;
     private int animate = 0;
 
 
@@ -45,7 +45,7 @@ public class Bomb extends Entity {
     protected void explosion() {
 
         exploded = true;
-        explosions = new DirectionExplosion[4];
+        //explosions = new DirectionExplosion[4];
 
         for (int i = 0; i < explosions.length; i++) {
             explosions[i] = new DirectionExplosion((int) x, (int) y, i);
@@ -53,9 +53,9 @@ public class Bomb extends Entity {
     }
 
     public void updateExplosions() {
-            for (int i = 0; i < explosions.length; i++) {
-                explosions[i].update(timeAfter);
-            }
+        for (DirectionExplosion explosion : explosions) {
+            explosion.update(timeAfter);
+        }
     }
 
     @Override

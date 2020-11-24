@@ -1,8 +1,13 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.KeyBoard;
 import uet.oop.bomberman.graphics.Sprite;
+
+import java.util.HashSet;
 
 public class Bomber extends movingObj {
 
@@ -17,10 +22,7 @@ public class Bomber extends movingObj {
     private int down = 0;
     private int time = 0; // time to die
     private final int animate = 5;
-    private boolean isLeftKeyPress = false;
-    private boolean isRightKeyPress = false;
-    private boolean isUpKeyPress = false;
-    private boolean isDownKeyPress = false;
+    private Bomb bombs = new Bomb();
     private boolean alive = true;
 
     public boolean getAlive() {
@@ -31,7 +33,6 @@ public class Bomber extends movingObj {
         this.alive = alive;
     }
 
-
     public Bomber(double x, double y, Image img, double speed) {
         super(x, y, img, speed);
         setFrameRight();
@@ -41,23 +42,6 @@ public class Bomber extends movingObj {
         setFrameDie();
     }
 
-    public void setLeftKeyPress(boolean status) {
-        this.isLeftKeyPress = status;
-    }
-
-    public void setRightKeyPress(boolean status) {
-        this.isRightKeyPress = status;
-    }
-
-    public void setDownKeyPress(boolean status) {
-        this.isDownKeyPress = status;
-    }
-
-    public void setUpKeyPress(boolean status) {
-        this.isUpKeyPress = status;
-    }
-
-
     private void setFrameRight() {
         Image right0 = Sprite.player_right.getFxImage();
         Image right1 = Sprite.player_right_1.getFxImage();
@@ -65,7 +49,9 @@ public class Bomber extends movingObj {
         this.imgFrameRight = new Image[3];
         imgFrameRight[0] = right0;
         imgFrameRight[1] = right1;
-        imgFrameRight[2] = right2;
+        imgFrameRight[2] = right2
+
+        ;
     }
 
     private void setFrameLeft() {
@@ -108,8 +94,13 @@ public class Bomber extends movingObj {
         imgFrameDie[2] = die2;
     }
 
+    public Bomb getBombs() {
+        return bombs;
+    }
+
     @Override
     public void update() {
+        collideWithEnemy(BombermanGame.board.getBalloom());
         if (alive) movingPlayer();
         else {
             if (time < 10) {
@@ -200,18 +191,20 @@ public class Bomber extends movingObj {
     }
 
     public void movingPlayer() {
-        if (this.isLeftKeyPress) {
+        if (BombermanGame.keyBoard.left) {
             moveLeft();
             checkToMapMoveLeft();
-        } else if (this.isRightKeyPress) {
+        } else if (BombermanGame.keyBoard.right) {
             moveRight();
             checkToMapMoveRight();
-        } else if (this.isDownKeyPress) {
+        } else if (BombermanGame.keyBoard.down) {
             moveDown();
             checkToMapMoveDown();
-        } else if (this.isUpKeyPress) {
+        } else if (BombermanGame.keyBoard.up) {
             moveUp();
             checkToMapMoveUp();
+        } else if (BombermanGame.keyBoard.space) {
+            bombs = new Bomb(xBomb(), yBomb(), false, Sprite.bomb.getFxImage());
         }
 
     }
@@ -230,7 +223,7 @@ public class Bomber extends movingObj {
     }
 
     public void checkToMapMoveRight() {
-        double widthFrameNow;
+        double widthFrameNow = 24;
         if (right < animate) {
             widthFrameNow = 20.0;
         } else if (right < 2 * animate) {
@@ -247,8 +240,8 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos][xPos2] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[(int) y][xPos2] != ' ') {
+            if (Board.map[yPos][xPos2] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                if (Board.map[(int) y][xPos2] != ' ') {
                     if (y == (int) y) {
                         this.x = xPos2 - distance;
                     } else {
@@ -258,7 +251,7 @@ public class Bomber extends movingObj {
                             this.x = xPos2 - distance;
                         }
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][xPos2] != 0) {
+                } else if (Board.map[(int) (y + 1)][xPos2] != 0) {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
@@ -271,13 +264,12 @@ public class Bomber extends movingObj {
 
     public void checkToMapMoveLeft() {
         int xPos = (int) (x - speed);
-
         int yPos = (int) y;
         int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos][xPos] != ' ' || BombermanGame.map[yPos2][xPos] != ' ') {
-                if (BombermanGame.map[(int) y][xPos] != ' ') {
+            if (Board.map[yPos][xPos] != ' ' || Board.map[yPos2][xPos] != ' ') {
+                if (Board.map[(int) y][xPos] != ' ') {
                     if (this.y == (int) y) {
                         this.x = xPos + 1;
                     } else {
@@ -287,7 +279,7 @@ public class Bomber extends movingObj {
                             this.x = xPos + 1;
                         }
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][xPos] != ' ') {
+                } else if (Board.map[(int) (y + 1)][xPos] != ' ') {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
@@ -309,14 +301,14 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y - speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[yPos2][xPos] != ' ') {
+            if (Board.map[yPos2][xPos] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                if (Board.map[yPos2][xPos] != ' ') {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos2 + 1;
                     }
-                } else if (BombermanGame.map[yPos2][xPos2] != ' ') {
+                } else if (Board.map[yPos2][xPos2] != ' ') {
                     if (this.x - (int) x <= 0.45) {
                         this.x = (int) x + 1 - distance;
                     } else {
@@ -338,14 +330,14 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y + 1 + speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (BombermanGame.map[yPos2][xPos] != ' ' || BombermanGame.map[yPos2][xPos2] != ' ') {
-                if (BombermanGame.map[(int) (y + 1)][xPos] != ' ') {
+            if (Board.map[yPos2][xPos] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                if (Board.map[(int) (y + 1)][xPos] != ' ') {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos;
                     }
-                } else if (BombermanGame.map[(int) (y + 1)][xPos2] != ' ') {
+                } else if (Board.map[(int) (y + 1)][xPos2] != ' ') {
                     if (this.x - (int) x <= 0.45) {
                         this.x = (int) x + 1 - distance;
                     } else {
@@ -355,4 +347,59 @@ public class Bomber extends movingObj {
             }
         }
     }
+
+    public HashSet<String> getMask(Entity obj) {
+        HashSet<String> mask = new HashSet<String>();
+
+        int pixel, a;
+        for (int i = 0; i < img.getWidth(); i++) {
+            for (int j = 0; j < img.getHeight(); j++) {
+                pixel = obj.getImg().;
+                a = (pixel >> 24) & 0xff;
+                if (a != 0) {
+                    mask.add((obj.getX() + i) + "," + (obj.getY() - j));
+                }
+            }
+        }
+        return mask;
+    }
+
+    public void collideWithEnemy(Entity obj) { // collision between player and enemy;
+//        double x1 = BombermanGame.board.getPlayer().getX();
+//        double y1 = BombermanGame.board.getPlayer().getY();
+//        double x2 = BombermanGame.board.getBalloom().getX();
+//        double y2 = BombermanGame.board.getBalloom().getY();
+//        if (x1 > x2 - 0.75 && x1 < x2 + 0.9 && y1 > y2 - 0.9 && y1 < y2 + 0.9)
+//            BombermanGame.board.getPlayer().setAlive(false);
+//    }
+        double ax1 = this.getX();
+        double ay1 = this.getY();
+        double ax2 = ax1 + this.img.getWidth();
+        double ay2 = ay1 + this.img.getHeight();
+        double bx1 = obj.getX();
+        double by1 = obj.getY();
+        double bx2 = bx1 + obj.img.getWidth();
+        double by2 = by1 + obj.img.getHeight();
+
+        if(by2 < ay1 || ay2 < by1 || bx2 < ax1 || ax2 < bx1)
+        {
+            alive = false; // Collision is impossible.
+        }
+        else // Collision is possible.
+        {
+            // get the masks for both images
+            HashSet<String> maskPlayer1 = getMask(this);
+            HashSet<String> maskPlayer2 = getMask(obj);
+
+            maskPlayer1.retainAll(maskPlayer2);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
+
+            if(maskPlayer1.size() > 0){  // if so, than there exists at least one pixel that is the same in both images, thus
+                alive = true;
+                return;
+
+            }
+        }
+        alive = false;
+    }
+
 }

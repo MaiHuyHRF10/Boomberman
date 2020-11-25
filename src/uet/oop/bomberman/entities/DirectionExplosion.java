@@ -12,6 +12,7 @@ public class DirectionExplosion extends Entity {
     protected Explosion[] explosion;
     private boolean remove = false;
     boolean last;
+
     public DirectionExplosion(double x, double y, int direction) {
         this.direction = direction;
         this.x = x;
@@ -24,20 +25,26 @@ public class DirectionExplosion extends Entity {
         int radius1 = 0;
         int x1 = (int) x;
         int y1 = (int) y;
-        if (direction == 0) y1--;
-        if (direction == 1) x1++;
-        if (direction == 2) y1++;
-        if (direction == 3) x1--;
-        if (Board.map[y1][x1] != '#' && Board.map[y1][x1] != '*') radius1++;
-        if (Board.map[y1][x1] == '*') {
-            for (Entity temp : BombermanGame.board.getEntities()) {
-                if (temp.getX() == x1 && temp.getY() == y1) {
-                    temp.setRemove(true);
-                    Board.map[y1][x1] = ' ';
-                    break;
+        while (radius1 < Board.bombRadius) {
+            if (direction == 0) y1--;
+            if (direction == 1) x1++;
+            if (direction == 2) y1++;
+            if (direction == 3) x1--;
+            if (Board.map[y1][x1] == ' ') radius1++;
+            if (Board.map[y1][x1] == '#') break;
+            if (Board.map[y1][x1] != '#' && Board.map[y1][x1] != ' ') {
+                for (Entity temp : BombermanGame.board.getEntities()) {
+                    if (temp.getX() == x1 && temp.getY() == y1) {
+                        temp.setRemove(true);
+                        Board.map[y1][x1] = ' ';
+                        break;
+                    }
                 }
+                break;
             }
+
         }
+
         return radius1;
 
     }
@@ -47,7 +54,6 @@ public class DirectionExplosion extends Entity {
     }
 
     private void createExplosions() {
-
 
         int x1 = (int) x;
         int y1 = (int) y;
@@ -75,9 +81,10 @@ public class DirectionExplosion extends Entity {
     public void update() {
 
     }
+
     public void update(int time) {
-        for ( int i = 0; i < explosion.length; i++) {
-            explosion[i].update(direction, time, last);
+        for (int i = 0; i < explosion.length; i++) {
+            explosion[i].update(direction, time);
         }
     }
 

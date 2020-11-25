@@ -1,5 +1,6 @@
 package uet.oop.bomberman.entities;
 
+import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Explosion extends Entity {
@@ -35,7 +36,8 @@ public class Explosion extends Entity {
     }
 
 
-    public void update(int direction, int time, boolean last) {
+    public void update(int direction, int time) {
+        BombermanGame.board.getPlayer().collideWithEnemy(this);
         time %= 30;
         if (time > 10 && time <= 20) {
             switch (direction) {

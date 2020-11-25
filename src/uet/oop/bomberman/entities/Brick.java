@@ -3,17 +3,27 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
+import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Brick extends Entity {
     private int timeAfterRemove = 30;
+    private Item entityBelow = null;
     public Brick(int x, int y, Image img) {
         super(x, y, img);
     }
 
+    public void addEntityBelow(Item entityBelow) {
+        this.entityBelow = entityBelow;
+    }
     @Override
     public void update() {
-
+        if (remove && timeAfterRemove == 0) {
+            BombermanGame.board.removeEntityAt(this.x, this.y);
+            if (entityBelow != null) {
+                BombermanGame.board.addEntity(entityBelow);
+            }
+        }
     }
 
     @Override

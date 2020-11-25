@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.stream.IntStream;
@@ -39,6 +40,9 @@ public class Bomb extends Entity {
                     remove = true;
                 }
             }
+        }
+        if (remove && timeAfter == 0) {
+            BombermanGame.board.getPlayer().removeBombAt(this.x, this.y);
         }
     }
 

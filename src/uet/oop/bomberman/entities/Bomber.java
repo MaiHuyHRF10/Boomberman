@@ -4,10 +4,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.KeyBoard;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class Bomber extends movingObj {
 
@@ -22,7 +23,7 @@ public class Bomber extends movingObj {
     private int down = 0;
     private int time = 0; // time to die
     private final int animate = 5;
-    private Bomb bombs = new Bomb();
+    private List<Bomb> bombs = new ArrayList<>();
     private boolean alive = true;
 
     public boolean getAlive() {
@@ -95,15 +96,46 @@ public class Bomber extends movingObj {
         imgFrameDie[2] = die2;
     }
 
-    public Bomb getBombs() {
+    public List<Bomb> getBombs() {
         return bombs;
+    }
+
+    public void addBomb(Bomb bomb) {
+        boolean check = true;
+        for (int i = 0; i < bombs.size(); i++) {
+            Bomb temp = bombs.get(i);
+            if (temp.getX() == bomb.getX() && temp.getY() == bomb.getY()) {
+                check = false;
+                break;
+            }
+        }
+        if (check) {
+            bombs.add(bomb);
+            //Board.map[(int) bomb.getY()][(int) bomb.getX()] = '*';
+        }
+    }
+
+    public void removeBombAt(double x, double y) {
+        for (int i = 0; i < bombs.size(); i++) {
+            Bomb temp = bombs.get(i);
+            if (temp.getX() == x && temp.getY() == y) {
+                bombs.remove(i);
+                //Board.map[(int) temp.getY()][(int) temp.getX()] = ' ';
+                break;
+            }
+        }
     }
 
     @Override
     public void update() {
-        collideWithEnemy(BombermanGame.board.getBalloom());
-        if (alive) movingPlayer();
-        else {
+        collide();
+        for (int i = 0; i < bombs.size(); i++) {
+            bombs.get(i).update();
+        }
+        if (alive) {
+            movingPlayer();
+            placeBomb();
+        } else {
             if (time < 10) {
                 this.setImg(imgFrameDie[0]);
                 time++;
@@ -118,6 +150,31 @@ public class Bomber extends movingObj {
             }
         }
     }
+
+    @Override
+    public void render(GraphicsContext gc) {
+        super.render(gc);
+        for (int i = 0; i < bombs.size(); i++) {
+            bombs.get(i).render(gc);
+        }
+    }
+
+    public void placeBomb() {
+        if (BombermanGame.keyBoard.space && bombs.size() < Board.bombCount) {
+            Bomb bomb = new Bomb(xBomb(), yBomb(), false, Sprite.bomb.getFxImage());
+            addBomb(bomb);
+        }
+    }
+
+    public void collide() {
+        for (int i = 0; i < BombermanGame.board.getEntities().size(); i++) {
+            if (BombermanGame.board.getEntities().get(i) instanceof Item) {
+                collideWithItem((Item)BombermanGame.board.getEntities().get(i));
+            }
+        }
+        collideWithEnemy(BombermanGame.board.getBalloom());
+    }
+
 
     @Override
     public void moveLeft() {
@@ -204,10 +261,7 @@ public class Bomber extends movingObj {
         } else if (BombermanGame.keyBoard.up) {
             moveUp();
             checkToMapMoveUp();
-        } else if (BombermanGame.keyBoard.space) {
-            bombs = new Bomb(xBomb(), yBomb(), false, Sprite.bomb.getFxImage());
         }
-
     }
 
     public int xBomb() {
@@ -350,27 +404,30 @@ public class Bomber extends movingObj {
     }
 
 
-
-    public void collideWithEnemy(Entity obj) { // collision between player and enemy;
-//        double x1 = BombermanGame.board.getPlayer().getX();
-//        double y1 = BombermanGame.board.getPlayer().getY();
-//        double x2 = BombermanGame.board.getBalloom().getX();
-//        double y2 = BombermanGame.board.getBalloom().getY();
-//        if (x1 > x2 - 0.75 && x1 < x2 + 0.9 && y1 > y2 - 0.9 && y1 < y2 + 0.9)
-//            BombermanGame.board.getPlayer().setAlive(false);
-//    }
-            if (alive) {
-                HashSet<String> maskPlayer1 = getMask(this);
-                HashSet<String> maskPlayer2 = getMask(obj);
-                int size = maskPlayer2.size();
-                //System.out.println(maskPlayer1.size() + " " + maskPlayer2.size());
-                maskPlayer1.retainAll(maskPlayer2);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
-                System.out.println(maskPlayer1.size() + " " + maskPlayer2.size());
-                if (maskPlayer1.size() > 0) {
-                    // if so, than there exists at least one pixel that is the same in both images, thus
-                    setAlive(false);
-                }
+    public void collideWithEnemy(Entity obj) {
+        if (alive) {
+            HashSet<String> maskPlayer1 = getMask(this);
+            HashSet<String> maskPlayer2 = getMask(obj);
+            int size = maskPlayer2.size();
+            maskPlayer1.retainAll(maskPlayer2);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
+            if (maskPlayer1.size() > 0) {
+                // if so, than there exists at least one pixel that is the same in both images, thus
+                setAlive(false);
             }
+        }
+    }
+
+    public void collideWithItem(Item obj) {
+        if (alive) {
+            HashSet<String> maskPlayer1 = getMask(this);
+            HashSet<String> maskPlayer2 = getMask(obj);
+            int size = maskPlayer2.size();
+            maskPlayer1.retainAll(maskPlayer2);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
+            if (maskPlayer1.size() > 0) {
+                // if so, than there exists at least one pixel that is the same in both images, thus
+                obj.setActive(true);
+            }
+        }
     }
 
 }

@@ -7,14 +7,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 public class BombermanGame extends Application {
     private GraphicsContext gc;
@@ -71,15 +67,16 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
-        board.getStillObjects().forEach(g -> g.render(gc));
-        board.getEntities().forEach(Entity::update);
-        board.getPlayer().getBombs().update();
+        for (int i = 0; i < board.getEntities().size(); i++) {
+            board.getEntities().get(i).update();
+        }
     }
 
     public void render() {
+
         gcForPlayer.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        board.getStillObjects().forEach(g -> g.render(gc));
         board.getEntities().forEach(g -> g.render(gcForPlayer));
-        board.getPlayer().getBombs().render(gcForPlayer);
     }
 
     public Entity getEntity(double x, double y) {

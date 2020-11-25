@@ -16,7 +16,8 @@ public class Board {
     public static final int WIDTH = 31;
     public static final int HEIGHT = 13;
     public static char[][] map = new char[HEIGHT][WIDTH];
-
+    public static int bombCount = 1;
+    public static int bombRadius = 1;
     public static List<Entity> entities = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
     private Bomber player;
@@ -47,23 +48,48 @@ public class Board {
 
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
-                Entity object, object1;
                 if (map[i][j] == '#') {
-                    object = new Wall(j, i, Sprite.wall.getFxImage());
-                    stillObjects.add(object);
-                } else if (map[i][j] == ' ') {
-                    object = new Grass(j, i, Sprite.grass.getFxImage());
+                    Wall object = new Wall(j, i, Sprite.wall.getFxImage());
                     stillObjects.add(object);
                 } else {
-                    object = new Brick(j, i, Sprite.brick.getFxImage());
-                    object1 = new Grass(j, i, Sprite.grass.getFxImage());
+                    Grass object = new Grass(j, i, Sprite.grass.getFxImage());
+                    stillObjects.add(object);
+                }
+                if (map[i][j] == '*') {
+                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
                     entities.add(object);
-                    stillObjects.add(object1);
+                } else if (map[i][j] == 's') {
+                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
+                    SpeedItem objectBelow1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
+                    entities.add(object);
+                    object.addEntityBelow(objectBelow1);
+                } else if (map[i][j] == 'b') {
+                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
+                    BombItem objectBelow1 = new BombItem(j, i, Sprite.powerup_bombs.getFxImage());
+                    entities.add(object);
+                    object.addEntityBelow(objectBelow1);
+                } else if (map[i][j] == 'f') {
+                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
+                    FlameItem objectBelow1 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
+                    entities.add(object);
+                    object.addEntityBelow(objectBelow1);
                 }
             }
         }
     }
 
+    public void removeEntityAt( double x, double y) {
+        for (int i = 0; i< entities.size(); i++) {
+            Entity temp = entities.get(i);
+            if (temp.getX() == x && temp.getY() == y ) {
+                entities.remove(i);
+                break;
+            }
+        }
+    }
+    public void addEntity(Entity object) {
+        entities.add(object);
+    }
     public List<Entity> getEntities() {
         return this.entities;
     }

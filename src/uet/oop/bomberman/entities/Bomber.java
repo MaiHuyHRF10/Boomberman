@@ -34,7 +34,6 @@ public class Bomber extends movingObj {
         this.alive = alive;
     }
 
-
     public Bomber(double x, double y, Image img, double speed) {
         super(x, y, img, speed);
         setFrameRight();
@@ -111,7 +110,6 @@ public class Bomber extends movingObj {
         }
         if (check) {
             bombs.add(bomb);
-            //Board.map[(int) bomb.getY()][(int) bomb.getX()] = '*';
         }
     }
 
@@ -120,7 +118,7 @@ public class Bomber extends movingObj {
             Bomb temp = bombs.get(i);
             if (temp.getX() == x && temp.getY() == y) {
                 bombs.remove(i);
-                //Board.map[(int) temp.getY()][(int) temp.getX()] = ' ';
+                Board.map[(int) temp.getY()][(int) temp.getX()] = ' ';
                 break;
             }
         }
@@ -130,6 +128,7 @@ public class Bomber extends movingObj {
     public void update() {
         collide();
         for (int i = 0; i < bombs.size(); i++) {
+            updateWallFromBomb(bombs.get(i));
             bombs.get(i).update();
         }
         if (alive) {
@@ -174,7 +173,6 @@ public class Bomber extends movingObj {
         }
         collideWithEnemy(BombermanGame.board.getBalloom());
     }
-
 
     @Override
     public void moveLeft() {
@@ -247,7 +245,7 @@ public class Bomber extends movingObj {
         }
         this.y += speed;
     }
-
+    
     public void movingPlayer() {
         if (BombermanGame.keyBoard.left) {
             moveLeft();
@@ -403,7 +401,6 @@ public class Bomber extends movingObj {
         }
     }
 
-
     public void collideWithEnemy(Entity obj) {
         if (alive) {
             HashSet<String> maskPlayer1 = getMask(this);
@@ -430,4 +427,12 @@ public class Bomber extends movingObj {
         }
     }
 
+    public void updateWallFromBomb(Bomb bomb) {
+        HashSet<String> maskBomb = getMask(bomb);
+        HashSet<String> maskPlayer = getMask(this);
+        maskBomb.retainAll(maskPlayer);
+        if (maskBomb.size() == 0) {
+            Board.map[(int) bomb.getY()][(int) bomb.getX()] = '*';
+        }
+    }
 }

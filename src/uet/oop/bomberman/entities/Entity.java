@@ -3,15 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import uet.oop.bomberman.graphics.Sprite;
-
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 
 public abstract class Entity<mask> {
@@ -47,7 +39,6 @@ public abstract class Entity<mask> {
     public Image getImg() {
         return this.img;
     }
-
 
     public void setImg(Image img) {
         this.img = img;

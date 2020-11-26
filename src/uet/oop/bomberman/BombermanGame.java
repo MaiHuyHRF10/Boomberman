@@ -44,8 +44,7 @@ public class BombermanGame extends Application {
 
         initNewGame();
         keyBoard.status(gameScene); // bat su kien
-        //Sound.play("ghost");
-
+        Sound.play("ghost");
     }
 
     public void initNewGame() throws FileNotFoundException {

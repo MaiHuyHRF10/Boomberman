@@ -422,16 +422,13 @@ public class Bomber extends movingObj {
             if (maskPlayer1.size() > 0) {
                 setAlive(false);
                 Sound.stop();
-                long soundEndGame = 999999999;
-                while (soundEndGame > 0) {
-                    soundEndGame--;
-                    if (soundEndGame == 0) {
-                        Sound.play("AA126_11");
-                    }
-                }
+
+                Sound.play("AA126_11");
+
             }
         }
     }
+
 
     public void collideWithItem(Item obj) {
         if (alive) {

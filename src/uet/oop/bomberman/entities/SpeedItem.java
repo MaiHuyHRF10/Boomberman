@@ -6,9 +6,8 @@ import uet.oop.bomberman.BombermanGame;
 
 public class SpeedItem extends Item{
 
-    private int timeActive = 600;
     private boolean active = false;
-
+    private boolean check = false;
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -23,13 +22,14 @@ public class SpeedItem extends Item{
 
         if (active) {
             remove = true;
-            if (timeActive > 0) {
-                BombermanGame.board.getPlayer().speed = 0.1;
-                timeActive --;
-            } else {
-                BombermanGame.board.getPlayer().speed = 0.05;
-                active = false;
+            if (!check) {
+                BombermanGame.board.getPlayer().speed += 0.025;
+                check = true;
             }
+//            else {
+//                BombermanGame.board.getPlayer().speed = 0.05;
+//                active = false;
+//            }
         } else if (remove){
             BombermanGame.board.removeEntityAt(this.x, this.y);
         }

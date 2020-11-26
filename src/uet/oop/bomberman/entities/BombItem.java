@@ -6,7 +6,6 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 
 public class BombItem extends Item{
-    private int timeActive = 600;
     private boolean active = false;
     private boolean check = false;
 
@@ -28,12 +27,12 @@ public class BombItem extends Item{
                 Board.bombCount ++;
                 check = true;
             }
-            if (timeActive > 0) {
-                timeActive --;
-            } else {
-                Board.bombCount --;
-                active = false;
-            }
+//            if (timeActive > 0) {
+//                timeActive --;
+//            } else {
+//                Board.bombCount --;
+//                active = false;
+//            }
         } else if (remove){
             BombermanGame.board.removeEntityAt(this.x, this.y);
         }

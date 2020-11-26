@@ -1,5 +1,7 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.canvas.GraphicsContext;
+import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -38,6 +40,14 @@ public class Explosion extends Entity {
 
     public void update(int direction, int time) {
         BombermanGame.board.getPlayer().collideWithEnemy(this);
+        int sizeBomb = BombermanGame.board.getPlayer().getBombs().size();
+        for (int i = 0; i < sizeBomb; i++) {
+            BombermanGame.board.getPlayer().getBombs().get(i).collideWithEnemy(this);
+        }
+        int sizeEnemy = BombermanGame.board.getEnemies().size();
+        for (int i = 0; i < sizeEnemy; i++) {
+            BombermanGame.board.getEnemies().get(i).collideWithExplosion(this);
+        }
         time %= 30;
         if (time > 10 && time <= 20) {
             switch (direction) {
@@ -55,7 +65,7 @@ public class Explosion extends Entity {
                     break;
             }
         }
-        if (time <=10 ) {
+        if (time <= 10) {
             switch (direction) {
                 case 0:
                     img = last ? Sprite.explosion_vertical_top_last.getFxImage() : Sprite.explosion_vertical.getFxImage();
@@ -73,6 +83,10 @@ public class Explosion extends Entity {
         }
     }
 
+    @Override
+    public void render(GraphicsContext gc) {
+        if (Board.map[(int) this.y][(int) this.x] != 'B') super.render(gc);
+    }
 
     @Override
     public void update() {

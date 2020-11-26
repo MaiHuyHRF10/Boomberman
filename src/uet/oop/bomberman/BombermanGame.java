@@ -70,13 +70,16 @@ public class BombermanGame extends Application {
         for (int i = 0; i < board.getEntities().size(); i++) {
             board.getEntities().get(i).update();
         }
+        for (int i = 0; i < board.getEnemies().size(); i++) {
+            board.getEnemies().get(i).update();
+        }
     }
 
     public void render() {
-
         gcForPlayer.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         board.getStillObjects().forEach(g -> g.render(gc));
         board.getEntities().forEach(g -> g.render(gcForPlayer));
+        board.getEnemies().forEach(g -> g.render(gcForPlayer));
     }
 
     public Entity getEntity(double x, double y) {

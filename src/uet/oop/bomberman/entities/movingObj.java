@@ -7,11 +7,12 @@ import uet.oop.bomberman.graphics.Sprite;
 public abstract class movingObj extends Entity {
 
     protected double speed;
-    private int left = 0;
-    private int right = 0;
-    private int up = 0;
-    private int down = 0;
-    private final int animate = 5;
+    protected int left = 0;
+    protected int right = 0;
+    protected int up = 0;
+    protected int down = 0;
+    protected final int animate = 5;
+    protected boolean alive = true;
 
     public movingObj(double x, double y, Image img, double speed) {
         super(x, y, img);

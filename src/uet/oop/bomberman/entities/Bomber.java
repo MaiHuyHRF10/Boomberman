@@ -24,7 +24,7 @@ public class Bomber extends movingObj {
     private int time = 0; // time to die
     private final int animate = 5;
     private List<Bomb> bombs = new ArrayList<>();
-    private boolean alive = true;
+
 
     public boolean getAlive() {
         return alive;
@@ -171,7 +171,11 @@ public class Bomber extends movingObj {
                 collideWithItem((Item)BombermanGame.board.getEntities().get(i));
             }
         }
-        collideWithEnemy(BombermanGame.board.getBalloom());
+        for (int i = 0; i < BombermanGame.board.getEnemies().size(); i++) {
+            if (BombermanGame.board.getEnemies().get(i) instanceof Enemy) {
+                collideWithEnemy((Enemy)BombermanGame.board.getEnemies().get(i));
+            }
+        }
     }
 
     @Override
@@ -428,11 +432,14 @@ public class Bomber extends movingObj {
     }
 
     public void updateWallFromBomb(Bomb bomb) {
-        HashSet<String> maskBomb = getMask(bomb);
-        HashSet<String> maskPlayer = getMask(this);
-        maskBomb.retainAll(maskPlayer);
-        if (maskBomb.size() == 0) {
-            Board.map[(int) bomb.getY()][(int) bomb.getX()] = '*';
+        if (alive) {
+            HashSet<String> maskBomb = getMask(bomb);
+            HashSet<String> maskPlayer = getMask(this);
+            maskBomb.retainAll(maskPlayer);
+            if (maskBomb.size() == 0) {
+                Board.map[(int) bomb.getY()][(int) bomb.getX()] = 'B';
+            }
         }
     }
+
 }

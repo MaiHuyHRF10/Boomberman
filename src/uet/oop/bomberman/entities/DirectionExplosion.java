@@ -32,6 +32,7 @@ public class DirectionExplosion extends Entity {
             if (direction == 3) x1--;
             if (Board.map[y1][x1] == ' ') radius1++;
             if (Board.map[y1][x1] == '#') break;
+            if (Board.map[y1][x1] == 'B') radius1++;
             if (Board.map[y1][x1] != '#' && Board.map[y1][x1] != ' ') {
                 for (Entity temp : BombermanGame.board.getEntities()) {
                     if (temp.getX() == x1 && temp.getY() == y1) {

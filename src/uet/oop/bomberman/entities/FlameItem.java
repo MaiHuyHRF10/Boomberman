@@ -28,12 +28,12 @@ public class FlameItem extends Item {
                 Board.bombRadius ++;
                 check = true;
             }
-            if (timeActive > 0) {
-                timeActive --;
-            } else {
-                Board.bombRadius --;
-                active = false;
-            }
+//            if (timeActive > 0) {
+//                timeActive --;
+//            } else {
+//                Board.bombRadius --;
+//                active = false;
+//            }
         } else if (remove){
             BombermanGame.board.removeEntityAt(this.x, this.y);
         }

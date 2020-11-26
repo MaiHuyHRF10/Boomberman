@@ -17,18 +17,19 @@ public class Board {
     public static int bombRadius = 1;
     public static List<Entity> entities = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
+    private static List<Enemy> enemies = new ArrayList<>();
+    private double speedOfEnemy = 0.025;
     private Bomber player;
-    private Balloom balloom;
-    private Oneal oneal;
+
 
     public Board() {
         double speedOfPlayer = 0.05;
         player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
-        balloom = new Balloom(5, 5, Sprite.balloom_right1.getFxImage(), 0.025);
-        oneal = new Oneal(25, 11, Sprite.oneal_right1.getFxImage(), 0.025);
+        //balloom = new Balloom(5, 5, Sprite.balloom_right1.getFxImage(), 0.025);
+        //oneal = new Oneal(25, 11, Sprite.oneal_right1.getFxImage(), 0.025);
         entities.add(player);
-        entities.add(balloom);
-        entities.add(oneal);
+        //entities.add(balloom);
+        //entities.add(oneal);
     }
 
     public void createMapLevel1() throws FileNotFoundException {
@@ -70,6 +71,14 @@ public class Board {
                     FlameItem objectBelow1 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
                     entities.add(object);
                     object.addEntityBelow(objectBelow1);
+                } else if (map[i][j] == '1') {
+                    map[i][j] = ' ';
+                    Balloom balloom = new Balloom(j, i, Sprite.balloom_right1.getFxImage(), speedOfEnemy);
+                    enemies.add(balloom);
+                } else if (map[i][j] == '2') {
+                    map[i][j] = ' ';
+                    Oneal oneal = new Oneal(j, i, Sprite.oneal_right1.getFxImage(), speedOfEnemy * 1.25);
+                    enemies.add(oneal);
                 }
             }
         }
@@ -84,9 +93,11 @@ public class Board {
             }
         }
     }
+
     public void addEntity(Entity object) {
         entities.add(object);
     }
+
     public List<Entity> getEntities() {
         return this.entities;
     }
@@ -103,21 +114,16 @@ public class Board {
         this.player = player;
     }
 
-    public Balloom getBalloom() {
-        return this.balloom;
+    public List<Enemy> getEnemies() {
+        return enemies;
     }
 
-    public void setBalloom(Balloom balloom) {
-        this.balloom = balloom;
+    public void removeEnemyAt(double x, double y) {
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy temp = enemies.get(i);
+            if (temp.getX() == x && temp.getY() == y) {
+                enemies.remove(temp);
+            }
+        }
     }
-
-    public Oneal getOneal() {
-        return oneal;
-    }
-
-    public void setOneal(Oneal oneal) {
-        this.oneal = oneal;
-    }
-
-
 }

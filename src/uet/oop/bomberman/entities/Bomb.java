@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.util.HashSet;
 import java.util.stream.IntStream;
 
 public class Bomb extends Entity {
@@ -62,6 +63,15 @@ public class Bomb extends Entity {
         }
     }
 
+    public void collideWithEnemy(Entity obj) {
+            HashSet<String> maskBomb = getMask(this);
+            HashSet<String> maskExplosion = getMask(obj);
+            maskBomb.retainAll(maskExplosion);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
+            if (maskBomb.size() > 0) {
+                // if so, than there exists at least one pixel that is the same in both images, thus
+                timeToExplode = 0;
+            }
+    }
     @Override
     public void render(GraphicsContext gc) {
         if (!exploded && !remove) {

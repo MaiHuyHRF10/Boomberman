@@ -1,7 +1,18 @@
 package uet.oop.bomberman;
 
 import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.entities.Oneal;
+import uet.oop.bomberman.entities.character.enemy.Balloom;
+import uet.oop.bomberman.entities.tile.item.BombItem;
+import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.tile.Brick;
+import uet.oop.bomberman.entities.character.enemy.Enemy;
+import uet.oop.bomberman.entities.tile.item.FlameItem;
+import uet.oop.bomberman.entities.tile.item.SpeedItem;
+import uet.oop.bomberman.entities.tile.Grass;
+import uet.oop.bomberman.entities.tile.Wall;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.sound.Sound;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +26,7 @@ public class Board {
     public static char[][] map = new char[HEIGHT][WIDTH];
     public static int bombCount = 1;
     public static int bombRadius = 1;
+
     public static List<Entity> entities = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
@@ -25,11 +37,9 @@ public class Board {
     public Board() {
         double speedOfPlayer = 0.05;
         player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
-        //balloom = new Balloom(5, 5, Sprite.balloom_right1.getFxImage(), 0.025);
-        //oneal = new Oneal(25, 11, Sprite.oneal_right1.getFxImage(), 0.025);
+
         entities.add(player);
-        //entities.add(balloom);
-        //entities.add(oneal);
+
     }
 
     public void createMapLevel1() throws FileNotFoundException {
@@ -77,15 +87,15 @@ public class Board {
                     enemies.add(balloom);
                 } else if (map[i][j] == '2') {
                     map[i][j] = ' ';
-                    Oneal oneal = new Oneal(j, i, Sprite.oneal_right1.getFxImage(), speedOfEnemy * 1.25);
-                    enemies.add(oneal);
+                    Oneal newOneal = new Oneal(j, i, Sprite.oneal_right1.getFxImage(), speedOfEnemy * 1.25);
+                    enemies.add(newOneal);
                 }
             }
         }
     }
 
-    public void removeEntityAt( double x, double y) {
-        for (int i = 0; i< entities.size(); i++) {
+    public void removeEntityAt(double x, double y) {
+        for (int i = 0; i < entities.size(); i++) {
             Entity temp = entities.get(i);
             if (temp.getX() == x && temp.getY() == y ) {
                 entities.remove(i);

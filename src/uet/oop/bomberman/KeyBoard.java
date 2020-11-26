@@ -1,7 +1,7 @@
 package uet.oop.bomberman;
 
 import javafx.scene.Scene;
-import uet.oop.bomberman.entities.Bomb;
+import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class KeyBoard {

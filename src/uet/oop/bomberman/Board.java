@@ -8,6 +8,7 @@ import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.tile.Brick;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
+import uet.oop.bomberman.entities.tile.item.Portal;
 import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.entities.tile.Grass;
 import uet.oop.bomberman.entities.tile.Wall;
@@ -26,6 +27,7 @@ public class Board {
     public static char[][] map = new char[HEIGHT][WIDTH];
     public static int bombCount = 1;
     public static int bombRadius = 1;
+    public static int score = 0;
 
     public static List<Entity> entities = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
@@ -89,6 +91,11 @@ public class Board {
                     map[i][j] = ' ';
                     Oneal newOneal = new Oneal(j, i, Sprite.oneal_right1.getFxImage(), speedOfEnemy * 1.25);
                     enemies.add(newOneal);
+                } else if (map[i][j] == 'x') {
+                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
+                    Portal objectBelow1 = new Portal(j, i, Sprite.portal.getFxImage());
+                    entities.add(object);
+                    object.addEntityBelow(objectBelow1);
                 }
             }
         }

@@ -40,11 +40,11 @@ public class KeyBoard {
             switch (event.getCode()) {
                 case LEFT:
                     left = false;
-                    //player.setImg(Sprite.player_left.getFxImage());
+                    BombermanGame.board.getPlayer().setImg(Sprite.player_left.getFxImage());
                     break;
                 case RIGHT:
                     right = false;
-                    //player.setImg(Sprite.player_right.getFxImage());
+                    BombermanGame.board.getPlayer().setImg(Sprite.player_right.getFxImage());
                     break;
                 case UP:
                     up = false;

@@ -9,6 +9,7 @@ import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
+import uet.oop.bomberman.entities.tile.item.Portal;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
@@ -176,12 +177,12 @@ public class Bomber extends movingObj {
     public void collide() {
         for (int i = 0; i < BombermanGame.board.getEntities().size(); i++) {
             if (BombermanGame.board.getEntities().get(i) instanceof Item) {
-                collideWithItem((Item)BombermanGame.board.getEntities().get(i));
+                collideWithItem((Item) BombermanGame.board.getEntities().get(i));
             }
         }
         for (int i = 0; i < BombermanGame.board.getEnemies().size(); i++) {
             if (BombermanGame.board.getEnemies().get(i) instanceof Enemy) {
-                collideToDie((Enemy)BombermanGame.board.getEnemies().get(i));
+                collideToDie((Enemy) BombermanGame.board.getEnemies().get(i));
             }
         }
     }
@@ -257,7 +258,7 @@ public class Bomber extends movingObj {
         }
         this.y += speed;
     }
-    
+
     public void movingPlayer() {
         if (BombermanGame.keyBoard.left) {
             moveLeft();
@@ -436,9 +437,19 @@ public class Bomber extends movingObj {
             HashSet<String> maskPlayer2 = getMask(obj);
             int size = maskPlayer2.size();
             maskPlayer1.retainAll(maskPlayer2);
-            if (maskPlayer1.size() > 0) {
-                obj.setActive(true);
-                Sound.play("Item");
+//            if (obj instanceof Portal) {
+//                Portal other = (Portal) obj;
+//                if (other.getActive()) {
+//                    if (maskPlayer1.size() > 0) {
+//                        Sound.play("CRYST_UP");
+//                    }
+//                }
+//            } else {
+            if (!(obj instanceof Portal)) {
+                if (maskPlayer1.size() > 0) {
+                    obj.setActive(true);
+                    Sound.play("Item");
+                }
             }
         }
     }

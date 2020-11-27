@@ -39,7 +39,6 @@ public class DirectionExplosion extends Entity {
                 for (Entity temp : BombermanGame.board.getEntities()) {
                     if (temp.getX() == x1 && temp.getY() == y1) {
                         temp.setRemove(true);
-                        Board.map[y1][x1] = ' ';
                         break;
                     }
                 }

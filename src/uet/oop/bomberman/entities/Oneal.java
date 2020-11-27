@@ -122,6 +122,7 @@ public class Oneal extends Enemy {
             time++;
         } else if (time < 40) {
             this.setImg(imgFrameDie[3]);
+            Board.score += 200;
             BombermanGame.board.removeEnemyAt(this.x, this.y);
         }
     }

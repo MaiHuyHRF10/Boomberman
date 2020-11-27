@@ -24,7 +24,8 @@ public class BombermanGame extends Application {
     private Scene gameScene;
     public static Board board = new Board();
     public static KeyBoard keyBoard;
-    public static Text text1;
+    public static Text textScore;
+    public static Text textTime;
 
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
@@ -50,6 +51,7 @@ public class BombermanGame extends Application {
         initNewGame();
         keyBoard.status(gameScene); // bat su kien
         Sound.play("ghost");
+        board.countDown();
     }
 
     public void initNewGame() throws FileNotFoundException {
@@ -64,15 +66,21 @@ public class BombermanGame extends Application {
         Canvas canvasForPlayer = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2));
         gcForPlayer = canvasForPlayer.getGraphicsContext2D();
         Text text = new Text(30, 35, "Score: ");
+        Text text1 = new Text(300, 35, "Time: ");
         text.setFill(Color.WHITE);
         text.setFont(new Font(20));
-        text1 =new Text(130, 35,String.valueOf(board.score));
         text1.setFill(Color.WHITE);
         text1.setFont(new Font(20));
+        textScore = new Text(130, 35, String.valueOf(board.score));
+        textScore.setFill(Color.WHITE);
+        textScore.setFont(new Font(20));
+        textTime = new Text(400, 35, String.valueOf(board.countDownTime / 60));
+        textTime.setFill(Color.WHITE);
+        textTime.setFont(new Font(20));
         Group gameRoot = new Group();
         gameRoot.getChildren().add(canvas);
         gameRoot.getChildren().add(canvasForPlayer);
-        gameRoot.getChildren().addAll(text,text1);
+        gameRoot.getChildren().addAll(text, text1, textScore, textTime);
 
         // Tao scene
         gameScene = new Scene(gameRoot, Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2), Color.BLACK);
@@ -86,7 +94,8 @@ public class BombermanGame extends Application {
         for (int i = 0; i < board.getEnemies().size(); i++) {
             board.getEnemies().get(i).update();
         }
-        text1.setText(String.valueOf(board.score));
+        textScore.setText(String.valueOf(board.score));
+        textTime.setText(String.valueOf(board.countDown() / 60));
     }
 
     public void render() {

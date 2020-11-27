@@ -27,10 +27,14 @@ public class Brick extends Entity {
         if (remove && timeAfterRemove == 0) {
             BombermanGame.board.removeEntityAt(this.x, this.y);
             if (entityBelow != null) {
-                BombermanGame.board.addEntity(entityBelow);
                 if (!(entityBelow instanceof Portal)) {
+                    BombermanGame.board.addEntity(entityBelow);
                     Board.map[(int) this.y][(int) this.x] = ' ';
+                } else {
+                    BombermanGame.board.addStillObject(entityBelow);
                 }
+            } else {
+                Board.map[(int) this.y][(int) this.x] = ' ';
             }
         }
     }

@@ -28,9 +28,10 @@ public class Board {
     public static int bombCount = 1;
     public static int bombRadius = 1;
     public static int score = 0;
+    public static int countDownTime = 181 * 60;
 
     public static List<Entity> entities = new ArrayList<>();
-    private final List<Entity> stillObjects = new ArrayList<>();
+    private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
     private double speedOfEnemy = 0.025;
     private Bomber player;
@@ -44,6 +45,10 @@ public class Board {
 
     }
 
+    public int countDown() {
+        countDownTime--;
+        return countDownTime;
+    }
     public void createMapLevel1() throws FileNotFoundException {
 
         Scanner scanner = new Scanner(new File("res/levels/Level1.txt"));
@@ -113,6 +118,10 @@ public class Board {
 
     public void addEntity(Entity object) {
         entities.add(object);
+    }
+
+    public void addStillObject(Entity object) {
+        stillObjects.add(object);
     }
 
     public List<Entity> getEntities() {

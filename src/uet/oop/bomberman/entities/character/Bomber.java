@@ -118,6 +118,7 @@ public class Bomber extends movingObj {
         }
         if (check) {
             bombs.add(bomb);
+            Sound.play("BOM_SET");
         }
     }
 
@@ -170,7 +171,6 @@ public class Bomber extends movingObj {
         if (BombermanGame.keyBoard.space && bombs.size() < Board.bombCount) {
             Bomb bomb = new Bomb(xBomb(), yBomb(), false, Sprite.bomb.getFxImage());
             addBomb(bomb);
-            Sound.play("BOM_SET");
         }
     }
 

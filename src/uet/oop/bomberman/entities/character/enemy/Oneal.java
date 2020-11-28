@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Oneal extends Enemy {
-    private Random random = new Random();
-
     public Oneal(double x, double y, Image img, double speed) {
         super(x, y, img, speed);
         setFrameRight();
@@ -55,28 +53,6 @@ public class Oneal extends Enemy {
         imgFrameLeft[2] = left2;
     }
 
-    public void movingPlayer() {
-        currentDirection = chooseDirection();
-        switch (currentDirection) {
-            case 0:
-                moveUp();
-                checkToMapMoveUp();
-                break;
-            case 1:
-                moveRight();
-                checkToMapMoveRight();
-                break;
-            case 2:
-                moveDown();
-                checkToMapMoveDown();
-                break;
-            case 3:
-                moveLeft();
-                checkToMapMoveLeft();
-                break;
-        }
-    }
-
     public void enemyDie() {
         if (time < 10) {
             this.setImg(imgFrameDie[0]);
@@ -93,4 +69,5 @@ public class Oneal extends Enemy {
             BombermanGame.board.removeEnemyAt(this.x, this.y);
         }
     }
+
 }

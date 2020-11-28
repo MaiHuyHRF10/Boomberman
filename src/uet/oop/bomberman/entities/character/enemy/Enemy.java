@@ -8,6 +8,13 @@ import uet.oop.bomberman.entities.character.movingObj;
 
 import java.util.HashSet;
 
+// 4 kinds of enemies
+// Balloom < Oneal < Doll < Kondoria
+// Balloom = 1
+// Oneal = 2
+// Doll = 3
+// Kondoria = 4
+
 public abstract class Enemy extends movingObj {
     protected Image[] imgFrameRight;
     protected Image[] imgFrameLeft;
@@ -207,6 +214,28 @@ public abstract class Enemy extends movingObj {
             }
         }
         this.y += speed;
+    }
+
+    public void movingPlayer() {
+        currentDirection = chooseDirection();
+        switch (currentDirection) {
+            case 0:
+                moveUp();
+                checkToMapMoveUp();
+                break;
+            case 1:
+                moveRight();
+                checkToMapMoveRight();
+                break;
+            case 2:
+                moveDown();
+                checkToMapMoveDown();
+                break;
+            case 3:
+                moveLeft();
+                checkToMapMoveLeft();
+                break;
+        }
     }
 
     public void collideWithExplosion(Entity obj) {

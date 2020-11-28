@@ -68,7 +68,6 @@ public abstract class Entity<mask> {
                 for (int x = 0; x < W; x++) {
                     final int argb = reader.getArgb(x, y);
                     a = (argb >> 24) & 0xff;
-                    //System.out.println(a);
                     if (a != 0) {
                         mask.add((int) (go.getX() * 32) + x + "," + ((int) (go.getY() * 32) - y)); // add the absolute x and absolute y coordinates to our set
                     }

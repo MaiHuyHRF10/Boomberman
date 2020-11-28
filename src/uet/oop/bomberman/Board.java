@@ -1,12 +1,10 @@
 package uet.oop.bomberman;
 
 import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.entities.character.enemy.Oneal;
-import uet.oop.bomberman.entities.character.enemy.Balloom;
+import uet.oop.bomberman.entities.character.enemy.*;
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.tile.Brick;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
 import uet.oop.bomberman.entities.tile.item.Portal;
 import uet.oop.bomberman.entities.tile.item.SpeedItem;
@@ -33,7 +31,7 @@ public class Board {
     private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
     private double speedOfEnemy = 0.025;
-    private Bomber player;
+    private static Bomber player;
 
 
     public Board() {
@@ -69,37 +67,56 @@ public class Board {
                     Grass object = new Grass(j, i, Sprite.grass.getFxImage());
                     stillObjects.add(object);
                 }
-                if (map[i][j] == '*') {
-                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
-                    entities.add(object);
-                } else if (map[i][j] == 's') {
-                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
-                    SpeedItem objectBelow1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
-                    entities.add(object);
-                    object.addEntityBelow(objectBelow1);
-                } else if (map[i][j] == 'b') {
-                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
-                    BombItem objectBelow1 = new BombItem(j, i, Sprite.powerup_bombs.getFxImage());
-                    entities.add(object);
-                    object.addEntityBelow(objectBelow1);
-                } else if (map[i][j] == 'f') {
-                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
-                    FlameItem objectBelow1 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
-                    entities.add(object);
-                    object.addEntityBelow(objectBelow1);
-                } else if (map[i][j] == '1') {
-                    map[i][j] = ' ';
-                    Balloom balloom = new Balloom(j, i, Sprite.balloom_right1.getFxImage(), speedOfEnemy);
-                    enemies.add(balloom);
-                } else if (map[i][j] == '2') {
-                    map[i][j] = ' ';
-                    Oneal newOneal = new Oneal(j, i, Sprite.oneal_right1.getFxImage(), speedOfEnemy * 1.25);
-                    enemies.add(newOneal);
-                } else if (map[i][j] == 'x') {
-                    Brick object = new Brick(j, i, Sprite.brick.getFxImage());
-                    Portal objectBelow1 = new Portal(j, i, Sprite.portal.getFxImage());
-                    entities.add(object);
-                    object.addEntityBelow(objectBelow1);
+
+                switch (map[i][j]) {
+                    case '*':
+                        Brick brick= new Brick(j, i, Sprite.brick.getFxImage());
+                        entities.add(brick);
+                        break;
+                    case 's':
+                        Brick bricks = new Brick(j, i, Sprite.brick.getFxImage());
+                        SpeedItem objectBelow1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
+                        entities.add(bricks);
+                        bricks.addEntityBelow(objectBelow1);
+                        break;
+                    case 'b':
+                        Brick brickb = new Brick(j, i, Sprite.brick.getFxImage());
+                        BombItem objectBelow2 = new BombItem(j, i, Sprite.powerup_bombs.getFxImage());
+                        entities.add(brickb);
+                        brickb.addEntityBelow(objectBelow2);
+                        break;
+                    case 'f':
+                        Brick object = new Brick(j, i, Sprite.brick.getFxImage());
+                        FlameItem objectBelow3 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
+                        entities.add(object);
+                        object.addEntityBelow(objectBelow3);
+                        break;
+                    case '1':
+                        map[i][j] = ' ';
+                        Balloom balloom = new Balloom(j, i, Sprite.balloom_right1.getFxImage(), speedOfEnemy);
+                        enemies.add(balloom);
+                        break;
+                    case '2':
+                        map[i][j] = ' ';
+                        Oneal newOneal = new Oneal(j, i, Sprite.oneal_right1.getFxImage(), speedOfEnemy * 1.25);
+                        enemies.add(newOneal);
+                        break;
+                    case '3':
+                        map[i][j] = ' ';
+                        Doll doll = new Doll(j, i, Sprite.doll_right1.getFxImage(), speedOfEnemy * 1.25);
+                        enemies.add(doll);
+                        break;
+                    case '4':
+                        map[i][j] = ' ';
+                        Kondoria kondoria = new Kondoria(j, i, Sprite.kondoria_right1.getFxImage(), speedOfEnemy);
+                        enemies.add(kondoria);
+                        break;
+                    case 'x':
+                        Brick objectx = new Brick(j, i, Sprite.brick.getFxImage());
+                        Portal objectBelow4 = new Portal(j, i, Sprite.portal.getFxImage());
+                        entities.add(objectx);
+                        objectx.addEntityBelow(objectBelow4);
+                        break;
                 }
             }
         }
@@ -131,8 +148,8 @@ public class Board {
         return this.stillObjects;
     }
 
-    public Bomber getPlayer() {
-        return this.player;
+    public static Bomber getPlayer() {
+        return player;
     }
 
     public void setPlayer(Bomber player) {

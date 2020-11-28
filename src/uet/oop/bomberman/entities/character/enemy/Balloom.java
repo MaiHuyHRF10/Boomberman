@@ -50,23 +50,7 @@ public class Balloom extends Enemy {
     }
 
     public int chooseDirection() {
-        double tempX = (double) Math.round(x * 1000) / 1000;
-        double tempY = (double) Math.round(y * 1000) / 1000;
-        if (tempX == (int) tempX && tempY == (int) tempY) {
-            int _x = (int) x;
-            int _y = (int) y;
-            int[] deltaX = {0, 1, 0, -1};
-            int[] deltaY = {-1, 0, 1, 0};
-
-            Random rd = new Random(System.currentTimeMillis()); //something like srand in C++
-            int i = Math.abs(rd.nextInt()) % 4;
-            while (Board.map[_y + deltaY[i]][_x + deltaX[i]] != ' ') {
-                i = Math.abs(rd.nextInt()) % 4;
-            }
-            return i;
-        } else {
-            return currentDirection;
-        }
+        return enemyAI.chooseDirectionRandom(x, y, currentDirection);
     }
 
     public void movingPlayer() {

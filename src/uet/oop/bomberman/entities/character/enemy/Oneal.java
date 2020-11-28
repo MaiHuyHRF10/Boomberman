@@ -1,4 +1,4 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.character.enemy;
 
 import javafx.scene.image.Image;
 import uet.oop.bomberman.Board;
@@ -6,6 +6,7 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Oneal extends Enemy {
@@ -19,41 +20,7 @@ public class Oneal extends Enemy {
     }
 
     public int chooseDirection() {
-        double bomberX = BombermanGame.board.getPlayer().getX();
-        double bomberY = BombermanGame.board.getPlayer().getY();
-        double tempX = (double) Math.round(x * 1000) / 1000;
-        double tempY = (double) Math.round(y * 1000) / 1000;
-        double diffX = bomberX - this.x;
-        double diffY = bomberY - this.y;
-        if (tempX == (int) tempX && tempY == (int) tempY) {
-            if (random.nextInt(2) == 0) {
-                if (diffX > 0) {
-                    return 1;
-                } else if (diffX < 0) {
-                    return 0;
-                } else {
-                    if (diffY > 0) {
-                        return 3;
-                    } else {
-                        return 2;
-                    }
-                }
-            } else {
-                if (diffY > 0) {
-                    return 3;
-                } else if (diffY < 0) {
-                    return 2;
-                } else {
-                    if (diffX > 0) {
-                        return 0;
-                    } else {
-                        return 1;
-                    }
-                }
-            }
-        } else {
-            return currentDirection;
-        }
+        return enemyAI.chooseDirectionMedium(x, y, currentDirection);
     }
 
     public void setFrameDie() {

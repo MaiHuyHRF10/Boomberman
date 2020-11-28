@@ -15,6 +15,7 @@ public abstract class Enemy extends movingObj {
     protected int currentDirection = 1;
     boolean alive = true;
     protected int time = 0;
+    protected AI enemyAI = new AI();
 
     public Enemy(double x, double y, Image img, double speed) {
         super(x, y, img, speed);

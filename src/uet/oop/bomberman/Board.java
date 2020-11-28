@@ -1,7 +1,7 @@
 package uet.oop.bomberman;
 
 import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.entities.Oneal;
+import uet.oop.bomberman.entities.character.enemy.Oneal;
 import uet.oop.bomberman.entities.character.enemy.Balloom;
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.character.Bomber;
@@ -13,7 +13,6 @@ import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.entities.tile.Grass;
 import uet.oop.bomberman.entities.tile.Wall;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.sound.Sound;
 
 import java.io.File;
 import java.io.FileNotFoundException;

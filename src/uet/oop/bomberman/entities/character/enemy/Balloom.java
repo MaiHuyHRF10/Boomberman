@@ -50,7 +50,7 @@ public class Balloom extends Enemy {
     }
 
     public int chooseDirection() {
-        return enemyAI.chooseDirectionRandom(x, y, currentDirection);
+        return enemyAI.chooseDirectionRandom(this, currentDirection);
     }
 
     public void enemyDie() {

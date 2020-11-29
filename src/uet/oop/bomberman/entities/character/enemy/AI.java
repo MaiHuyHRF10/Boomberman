@@ -14,35 +14,36 @@ public class AI {
     int[] deltaX = {0, 1, 0, -1};
     int[] deltaY = {-1, 0, 1, 0};
 
-    public int chooseDirectionRandom(double x, double y, int currentDirection) {
-        double tempX = (double) Math.round(x * 1000) / 1000;
-        double tempY = (double) Math.round(y * 1000) / 1000;
+    public int chooseDirectionRandom(Enemy enemy, int currentDirection) {
+        double tempX = (double) Math.round(enemy.getX() * 1000) / 1000;
+        double tempY = (double) Math.round(enemy.getY() * 1000) / 1000;
         if (tempX == (int) tempX && tempY == (int) tempY) {
-            int _x = (int) x;
-            int _y = (int) y;
-
             Random rd = new Random(System.currentTimeMillis()); //something like srand in C++
             int i = Math.abs(rd.nextInt()) % 4;
-            while (Board.map[_y + deltaY[i]][_x + deltaX[i]] != ' ') {
-                i = Math.abs(rd.nextInt()) % 4;
-            }
             return i;
         } else {
             return currentDirection;
         }
     }
 
-    public int chooseDirectionMedium(double x, double y, int currentDirection) {
+    public int chooseDirectionMedium(Enemy enemy, int currentDirection) {
         double bomberX = BombermanGame.board.getPlayer().getX();
         double bomberY = BombermanGame.board.getPlayer().getY();
-        double tempX = (double) Math.round(x * 1000) / 1000;
-        double tempY = (double) Math.round(y * 1000) / 1000;
-        double diffX = bomberX - x;
-        double diffY = bomberY - y;
+        double tempX = (double) Math.round(enemy.getX() * 1000) / 1000;
+        double tempY = (double) Math.round(enemy.getY() * 1000) / 1000;
+        double diffX = bomberX - enemy.getX();
+        double diffY = bomberY - enemy.getY();
 
         double distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-        if (distance < 5) {
+        if (distance > 10) {
+            enemy.setSpeed(Board.speedOfEnemy);
+        }
+
+        if (distance < 3) {
+            enemy.setSpeed(Board.speedOfEnemy * 1.25 * 1.2);
+        }
+        if (distance < 6) {
             if (tempX == (int) tempX && tempY == (int) tempY) {
                 ArrayList<Integer> possibleDirections = new ArrayList<>();
                 if (diffX > 0) {
@@ -55,7 +56,7 @@ public class AI {
 
                 return possibleDirections.get(Math.abs(random.nextInt() % 2));
             } return currentDirection;
-        } else return chooseDirectionRandom(x, y, currentDirection);
+        } else return chooseDirectionRandom(enemy, currentDirection);
     }
 
     public int chooseDirectionMedium2(Bomber bomber, Enemy enemy, int currentDirection) {
@@ -68,7 +69,7 @@ public class AI {
 
         double distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-        if (distance < 5) {
+        if (distance < Math.sqrt(50)) {
             if (tempX == (int) tempX && tempY == (int) tempY) {
                 ArrayList<Integer> possibleDirections = new ArrayList<>();
                 if (diffX > 0) {
@@ -88,52 +89,85 @@ public class AI {
                 }
 
                 switch (possibleDirections.size()) {
-                    case 0: {
+                    case 0:
+                        int direction = -1;
                         for (int i = 0; i < 4; i++) {
-                            if (checkDirectionToAvoidBomb(bomber, enemy, i)) return i;
+                            if (checkDirectionToAvoidBomb(bomber, enemy, i)) {
+                                direction = i;
+                            }
                         }
-                    }
+                        if (direction != -1) return direction;
+                        else {
+                            return chooseDirectionRandom(enemy, currentDirection);
+                        }
                     case 1:
                         return possibleDirections.get(0);
                     case 2:
-                        return possibleDirections.get(Math.abs(random.nextInt(2)));
+                        return possibleDirections.get(Math.abs(random.nextInt() % 2));
                 }
-                return possibleDirections.get(random.nextInt(2));
             } return currentDirection;
-        } else return chooseDirectionRandom(enemy.getX(), enemy.getY(), currentDirection);
+        } else return chooseDirectionRandom(enemy, currentDirection);
     }
 
-    public boolean checkDirectionToAvoidBomb(Bomber bomber, Enemy enemy, int currentDirection) {
+    public int chooseDirectionGoThroughBrick(Enemy enemy, int currentDirection) {
+        double tempX = (double) Math.round(enemy.getX() * 1000) / 1000;
+        double tempY = (double) Math.round(enemy.getY() * 1000) / 1000;
+        if (tempX == (int) tempX && tempY == (int) tempY) {
+            ArrayList<Integer> possibleDirections = new ArrayList<>();
+
+            for (int i = 0; i < 4; i++) {
+                if (checkCanMoveThroughBrick(enemy, i)) possibleDirections.add(i);
+            }
+
+            int size = possibleDirections.size();
+            if (size == 0) return -1;
+            else {
+                int i = Math.abs(random.nextInt() % size);
+                return possibleDirections.get(i);
+            }
+        } else {
+            return currentDirection;
+        }
+    }
+
+    public boolean checkDirectionToAvoidBomb(Bomber bomber, Enemy enemy, int direction) {
         List<Bomb> bombs = bomber.getBombs();
         for (int i = 0; i < bombs.size(); i++) {
-            if (!avoidBomb(enemy, bombs.get(i).getX(), bombs.get(i).getY(), currentDirection))
+            if (!avoidBomb(enemy, bombs.get(i).getX(), bombs.get(i).getY(), direction))
                 return false;
         }
         return true;
     }
 
     public boolean avoidBomb(Enemy enemy, double xBomb, double yBomb, int direction) {
-        double tempX = enemy.getX();
-        double tempY = enemy.getY();
-        switch (direction) {
-            case 0:
-                tempY -= enemy.getSpeed();
-                break;
-            case 1:
-                tempX += enemy.getSpeed();
-                break;
-            case 2:
-                tempY += enemy.getSpeed();
-                break;
-            case 3:
-                tempX -= enemy.getSpeed();
-                break;
+        double X = (double) Math.round(enemy.getX() * 1000) / 1000;
+        double Y = (double) Math.round(enemy.getY() * 1000) / 1000;
+
+        int xEnemy = (int) X;
+        int yEnemy = (int) Y;
+
+        xEnemy += deltaX[direction];
+        yEnemy += deltaY[direction];
+
+        int diffX = xEnemy - (int) xBomb;
+        int diffY = yEnemy - (int) yBomb;
+
+        int distanceSquare = diffX * diffX + diffY * diffY;
+
+        if (distanceSquare < 3) {
+            return false;
+        } {
+            return true;
         }
-
-        double diffX = tempX - xBomb;
-        double diffY = tempY - yBomb;
-        double distance = Math.sqrt(diffX * diffX + diffY * diffY);
-
-        return distance < Math.sqrt(8);
     }
+
+    public boolean checkCanMoveThroughBrick(Enemy enemy, int direction) {
+        double tempX = (double) Math.round(enemy.getX() * 1000) / 1000;
+        double tempY = (double) Math.round(enemy.getY() * 1000) / 1000;
+
+        tempX += deltaX[direction];
+        tempY += deltaY[direction];
+        return Board.map[(int) tempY][(int) tempX] != '#';
+    }
+
 }

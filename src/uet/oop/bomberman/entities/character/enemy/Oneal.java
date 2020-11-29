@@ -3,11 +3,8 @@ package uet.oop.bomberman.entities.character.enemy;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.util.ArrayList;
-import java.util.Random;
 
 public class Oneal extends Enemy {
     public Oneal(double x, double y, Image img, double speed) {
@@ -18,7 +15,7 @@ public class Oneal extends Enemy {
     }
 
     public int chooseDirection() {
-        return enemyAI.chooseDirectionMedium(x, y, currentDirection);
+        return enemyAI.chooseDirectionMedium(this, currentDirection);
     }
 
     public void setFrameDie() {

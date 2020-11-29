@@ -47,9 +47,27 @@ public class Kondoria extends Enemy{
     }
 
     public int chooseDirection() {
-        return enemyAI.chooseDirectionMedium(x, y, currentDirection);
+        return enemyAI.chooseDirectionGoThroughBrick(this, currentDirection);
     }
 
+    public void enemyDie() {
+        if (time < 10) {
+            this.setImg(imgFrameDie[0]);
+            time++;
+        } else if (time < 20) {
+            this.setImg(imgFrameDie[1]);
+            time++;
+        } else if (time < 30) {
+            this.setImg(imgFrameDie[2]);
+            time++;
+        } else if (time < 40) {
+            this.setImg(imgFrameDie[3]);
+            Board.score += 200;
+            BombermanGame.board.removeEnemyAt(this.x, this.y);
+        }
+    }
+
+    @Override
     public void movingPlayer() {
         currentDirection = chooseDirection();
         switch (currentDirection) {
@@ -67,22 +85,4 @@ public class Kondoria extends Enemy{
                 break;
         }
     }
-
-    public void enemyDie() {
-        if (time < 10) {
-            this.setImg(imgFrameDie[0]);
-            time++;
-        } else if (time < 20) {
-            this.setImg(imgFrameDie[1]);
-            time++;
-        } else if (time < 30) {
-            this.setImg(imgFrameDie[2]);
-            time++;
-        } else if (time < 40) {
-            this.setImg(imgFrameDie[3]);
-            Board.score += 300;
-            BombermanGame.board.removeEnemyAt(this.x, this.y);
-        }
-    }
-
 }

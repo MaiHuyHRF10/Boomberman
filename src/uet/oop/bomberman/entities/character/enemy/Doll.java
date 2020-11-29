@@ -47,7 +47,7 @@ public class Doll extends Enemy {
     }
 
     public int chooseDirection() {
-        return enemyAI.chooseDirectionMedium(x, y, currentDirection);
+        return enemyAI.chooseDirectionMedium2(Board.getPlayer(), this, currentDirection);
     }
 
     public void enemyDie() {

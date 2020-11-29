@@ -71,9 +71,8 @@ public class Bomb extends Entity {
     public void collideWithBombOther(Entity obj) {
             HashSet<String> maskBomb = getMask(this);
             HashSet<String> maskBombOther = getMask(obj);
-            maskBomb.retainAll(maskBombOther);  // Check to see if any pixels in maskPlayer2 are the same as those in maskPlayer1
+            maskBomb.retainAll(maskBombOther);
             if (maskBomb.size() > 0) {
-                // if so, than there exists at least one pixel that is the same in both images, thus
                 timeToExplode = 0;
             }
     }

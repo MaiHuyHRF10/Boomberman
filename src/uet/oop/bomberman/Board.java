@@ -30,7 +30,7 @@ public class Board {
     public static List<Entity> entities = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
-    private double speedOfEnemy = 0.025;
+    public static double speedOfEnemy = 0.025;
     private static Bomber player;
 
 

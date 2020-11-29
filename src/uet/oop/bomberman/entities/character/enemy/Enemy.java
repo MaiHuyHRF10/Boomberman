@@ -30,6 +30,8 @@ public abstract class Enemy extends movingObj {
 
     public abstract int chooseDirection();
 
+    public abstract void enemyDie();
+
     public void checkToMapMoveRight() {
         double widthFrameNow = 32;
 
@@ -257,5 +259,4 @@ public abstract class Enemy extends movingObj {
         }
     }
 
-    public abstract void enemyDie();
 }

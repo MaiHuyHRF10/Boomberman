@@ -14,4 +14,8 @@ public abstract class Item extends Entity {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public boolean isActive() {
+        return active;
+    }
 }

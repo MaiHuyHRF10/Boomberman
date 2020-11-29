@@ -4,16 +4,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
-import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.tile.Brick;
 import uet.oop.bomberman.entities.tile.item.Item;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.item.Portal;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -169,8 +168,10 @@ public class Bomber extends movingObj {
 
     public void placeBomb() {
         if (BombermanGame.keyBoard.space && bombs.size() < Board.bombCount) {
-            Bomb bomb = new Bomb(xBomb(), yBomb(), false, Sprite.bomb.getFxImage());
-            addBomb(bomb);
+            if (!(BombermanGame.board.getEntity((double) xBomb(), (double) yBomb()) instanceof Brick)) {
+                Bomb bomb = new Bomb(xBomb(), yBomb(), false, Sprite.bomb.getFxImage());
+                addBomb(bomb);
+            }
         }
     }
 
@@ -306,26 +307,26 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (Board.map[yPos][xPos2] != ' ' || Board.map[yPos2][xPos2] != ' ') {
-                if (Board.map[(int) y][xPos2] != ' ') {
-                    if (y == (int) y) {
-                        this.x = xPos2 - distance;
-                    } else {
-                        if (this.y - (int) y >= 0.7) {
-                            this.y = (int) y + 1;
+                if (Board.map[yPos][xPos2] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                    if (Board.map[(int) y][xPos2] != ' ') {
+                        if (y == (int) y) {
+                            this.x = xPos2 - distance;
+                        } else {
+                            if (this.y - (int) y >= 0.7) {
+                                this.y = (int) y + 1;
+                            } else {
+                                this.x = xPos2 - distance;
+                            }
+                        }
+                    } else if (Board.map[(int) (y + 1)][xPos2] != 0) {
+                        if (this.y - (int) y <= 0.3) {
+                            this.y = (int) y;
                         } else {
                             this.x = xPos2 - distance;
                         }
                     }
-                } else if (Board.map[(int) (y + 1)][xPos2] != 0) {
-                    if (this.y - (int) y <= 0.3) {
-                        this.y = (int) y;
-                    } else {
-                        this.x = xPos2 - distance;
-                    }
                 }
             }
-        }
     }
 
     public void checkToMapMoveLeft() {
@@ -445,7 +446,7 @@ public class Bomber extends movingObj {
 //                    }
 //                }
 //            } else {
-            if (!(obj instanceof Portal)) {
+            if (!(obj instanceof Portal) && !obj.isActive()) {
                 if (maskPlayer1.size() > 0) {
                     obj.setActive(true);
                     Sound.play("Item");
@@ -459,7 +460,7 @@ public class Bomber extends movingObj {
             HashSet<String> maskBomb = getMask(bomb);
             HashSet<String> maskPlayer = getMask(this);
             maskBomb.retainAll(maskPlayer);
-            if (maskBomb.size() == 0) {
+            if (maskBomb.size() == 0 && !Board.bombPass) {
                 Board.map[(int) bomb.getY()][(int) bomb.getX()] = 'B';
             }
         }

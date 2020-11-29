@@ -5,7 +5,6 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.sound.Sound;
 
 public class Explosion extends Entity {
 
@@ -41,7 +40,9 @@ public class Explosion extends Entity {
 
 
     public void update(int direction, int time) {
-        BombermanGame.board.getPlayer().collideToDie(this);
+        if (!Board.flamePass) {
+            BombermanGame.board.getPlayer().collideToDie(this);
+        }
         int sizeBomb = BombermanGame.board.getPlayer().getBombs().size();
         for (int i = 0; i < sizeBomb; i++) {
             BombermanGame.board.getPlayer().getBombs().get(i).collideWithBombOther(this);

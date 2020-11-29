@@ -1,15 +1,12 @@
 package uet.oop.bomberman;
 
-import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.entities.character.enemy.*;
-import uet.oop.bomberman.entities.tile.item.BombItem;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.enemy.*;
 import uet.oop.bomberman.entities.tile.Brick;
-import uet.oop.bomberman.entities.tile.item.FlameItem;
-import uet.oop.bomberman.entities.tile.item.Portal;
-import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.entities.tile.Grass;
 import uet.oop.bomberman.entities.tile.Wall;
+import uet.oop.bomberman.entities.tile.item.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.File;
@@ -22,23 +19,28 @@ public class Board {
     public static final int WIDTH = 31;
     public static final int HEIGHT = 13;
     public static char[][] map = new char[HEIGHT][WIDTH];
+    public static char[][] mapPassWall = new char[HEIGHT][WIDTH];
     public static int bombCount = 1;
     public static int bombRadius = 1;
     public static int score = 0;
+    public static boolean flamePass = false;
+    public static boolean bombPass = false;
+    public static boolean wallPass = false;
     public static int countDownTime = 181 * 60;
 
     public static List<Entity> entities = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
     public static double speedOfEnemy = 0.025;
+    private double speedOfPlayer = 0.05;
     private static Bomber player;
 
 
     public Board() {
-        double speedOfPlayer = 0.05;
-        player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
-
-        entities.add(player);
+//        double speedOfPlayer = 0.05;
+//        player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
+//
+//        entities.add(player);
 
     }
 
@@ -46,6 +48,7 @@ public class Board {
         countDownTime--;
         return countDownTime;
     }
+
     public void createMapLevel1() throws FileNotFoundException {
 
         Scanner scanner = new Scanner(new File("res/levels/Level1.txt"));
@@ -70,7 +73,7 @@ public class Board {
 
                 switch (map[i][j]) {
                     case '*':
-                        Brick brick= new Brick(j, i, Sprite.brick.getFxImage());
+                        Brick brick = new Brick(j, i, Sprite.brick.getFxImage());
                         entities.add(brick);
                         break;
                     case 's':
@@ -117,15 +120,45 @@ public class Board {
                         entities.add(objectx);
                         objectx.addEntityBelow(objectBelow4);
                         break;
+                    case 'l':
+                        Brick objectl = new Brick(j, i, Sprite.brick.getFxImage());
+                        FlamePass objectBelow5 = new FlamePass(j, i, Sprite.powerup_flamepass.getFxImage());
+                        entities.add(objectl);
+                        objectl.addEntityBelow(objectBelow5);
+                        break;
+                    case 'o':
+                        Brick objecto = new Brick(j, i, Sprite.brick.getFxImage());
+                        BombPass objectBelow6 = new BombPass(j, i, Sprite.powerup_bombpass.getFxImage());
+                        entities.add(objecto);
+                        objecto.addEntityBelow(objectBelow6);
+                        break;
+                    case 'a':
+                        Brick objecta = new Brick(j, i, Sprite.brick.getFxImage());
+                        WallPass objectBelow7 = new WallPass(j, i, Sprite.powerup_wallpass.getFxImage());
+                        entities.add(objecta);
+                        objecta.addEntityBelow(objectBelow7);
+                        break;
                 }
             }
         }
+        player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
+        entities.add(player);
+    }
+
+    public Entity getEntity(double x, double y) {
+        for (int i = 0; i < entities.size(); i++) {
+            Entity temp = entities.get(i);
+            if (temp.getX() == x && temp.getY() == y) {
+                return temp;
+            }
+        }
+        return null;
     }
 
     public void removeEntityAt(double x, double y) {
         for (int i = 0; i < entities.size(); i++) {
             Entity temp = entities.get(i);
-            if (temp.getX() == x && temp.getY() == y ) {
+            if (temp.getX() == x && temp.getY() == y) {
                 entities.remove(i);
                 break;
             }

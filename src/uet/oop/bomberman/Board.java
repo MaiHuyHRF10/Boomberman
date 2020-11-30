@@ -8,6 +8,7 @@ import uet.oop.bomberman.entities.tile.Grass;
 import uet.oop.bomberman.entities.tile.Wall;
 import uet.oop.bomberman.entities.tile.item.*;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.level.Level;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +20,7 @@ public class Board {
     public static final int WIDTH = 31;
     public static final int HEIGHT = 13;
     public static char[][] map = new char[HEIGHT][WIDTH];
-    public static char[][] mapPassWall = new char[HEIGHT][WIDTH];
+
     public static int bombCount = 1;
     public static int bombRadius = 1;
     public static int score = 0;
@@ -28,121 +29,32 @@ public class Board {
     public static boolean wallPass = false;
     public static int countDownTime = 181 * 60;
 
-    public static List<Entity> entities = new ArrayList<>();
+    private static List<Entity> entities = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
     public static double speedOfEnemy = 0.025;
     private double speedOfPlayer = 0.05;
     private static Bomber player;
+    private Level gameLevel;
+    private int level;
 
 
     public Board() {
-//        double speedOfPlayer = 0.05;
-//        player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
-//
-//        entities.add(player);
-
-    }
-
-    public int countDown() {
-        countDownTime--;
-        return countDownTime;
-    }
-
-    public void createMapLevel1() throws FileNotFoundException {
-
-        Scanner scanner = new Scanner(new File("res/levels/Level1.txt"));
-        int row = 0;
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            for (int i = 0; i < line.length(); i++) {
-                map[row][i] = line.charAt(i);
-            }
-            row++;
-        }
-
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                if (map[i][j] == '#') {
-                    Wall object = new Wall(j, i, Sprite.wall.getFxImage());
-                    stillObjects.add(object);
-                } else {
-                    Grass object = new Grass(j, i, Sprite.grass.getFxImage());
-                    stillObjects.add(object);
-                }
-
-                switch (map[i][j]) {
-                    case '*':
-                        Brick brick = new Brick(j, i, Sprite.brick.getFxImage());
-                        entities.add(brick);
-                        break;
-                    case 's':
-                        Brick bricks = new Brick(j, i, Sprite.brick.getFxImage());
-                        SpeedItem objectBelow1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
-                        entities.add(bricks);
-                        bricks.addEntityBelow(objectBelow1);
-                        break;
-                    case 'b':
-                        Brick brickb = new Brick(j, i, Sprite.brick.getFxImage());
-                        BombItem objectBelow2 = new BombItem(j, i, Sprite.powerup_bombs.getFxImage());
-                        entities.add(brickb);
-                        brickb.addEntityBelow(objectBelow2);
-                        break;
-                    case 'f':
-                        Brick object = new Brick(j, i, Sprite.brick.getFxImage());
-                        FlameItem objectBelow3 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
-                        entities.add(object);
-                        object.addEntityBelow(objectBelow3);
-                        break;
-                    case '1':
-                        map[i][j] = ' ';
-                        Balloom balloom = new Balloom(j, i, Sprite.balloom_right1.getFxImage(), speedOfEnemy);
-                        enemies.add(balloom);
-                        break;
-                    case '2':
-                        map[i][j] = ' ';
-                        Oneal newOneal = new Oneal(j, i, Sprite.oneal_right1.getFxImage(), speedOfEnemy * 1.25);
-                        enemies.add(newOneal);
-                        break;
-                    case '3':
-                        map[i][j] = ' ';
-                        Doll doll = new Doll(j, i, Sprite.doll_right1.getFxImage(), speedOfEnemy * 1.25);
-                        enemies.add(doll);
-                        break;
-                    case '4':
-                        map[i][j] = ' ';
-                        Kondoria kondoria = new Kondoria(j, i, Sprite.kondoria_right1.getFxImage(), speedOfEnemy);
-                        enemies.add(kondoria);
-                        break;
-                    case 'x':
-                        Brick objectx = new Brick(j, i, Sprite.brick.getFxImage());
-                        Portal objectBelow4 = new Portal(j, i, Sprite.portal.getFxImage());
-                        entities.add(objectx);
-                        objectx.addEntityBelow(objectBelow4);
-                        break;
-                    case 'l':
-                        Brick objectl = new Brick(j, i, Sprite.brick.getFxImage());
-                        FlamePass objectBelow5 = new FlamePass(j, i, Sprite.powerup_flamepass.getFxImage());
-                        entities.add(objectl);
-                        objectl.addEntityBelow(objectBelow5);
-                        break;
-                    case 'o':
-                        Brick objecto = new Brick(j, i, Sprite.brick.getFxImage());
-                        BombPass objectBelow6 = new BombPass(j, i, Sprite.powerup_bombpass.getFxImage());
-                        entities.add(objecto);
-                        objecto.addEntityBelow(objectBelow6);
-                        break;
-                    case 'a':
-                        Brick objecta = new Brick(j, i, Sprite.brick.getFxImage());
-                        WallPass objectBelow7 = new WallPass(j, i, Sprite.powerup_wallpass.getFxImage());
-                        entities.add(objecta);
-                        objecta.addEntityBelow(objectBelow7);
-                        break;
-                }
-            }
-        }
         player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
-        entities.add(player);
+        level = 1;
+        gameLevel = new Level(this);
+    }
+
+    public void changeLevel(int level) {
+        entities.clear();
+        enemies.clear();
+        stillObjects.clear();
+        try {
+            gameLevel.createMapLevel(level);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        this.level = level;
     }
 
     public Entity getEntity(double x, double y) {
@@ -199,6 +111,54 @@ public class Board {
             if (temp.getX() == x && temp.getY() == y) {
                 enemies.remove(temp);
             }
+        }
+    }
+
+    public void addEnemy(Enemy newEnemy) {
+        enemies.add(newEnemy);
+    }
+
+    public int countDown() {
+        countDownTime--;
+        return countDownTime;
+    }
+
+    public int index(double x, double y) {
+        for (int i = 0; i < entities.size(); i++) {
+            Entity temp = entities.get(i);
+            if (temp.getX() == x && temp.getY() == y) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public Level getGameLevel() {
+        return this.gameLevel;
+    }
+
+    public void render() {
+        BombermanGame.gc.clearRect(0, 0, BombermanGame.canvas.getWidth(), BombermanGame.canvas.getHeight());
+        BombermanGame.gcForPlayer.clearRect(0, 0, BombermanGame.canvas.getWidth(), BombermanGame.canvas.getHeight());
+        BombermanGame.board.getStillObjects().forEach(g -> g.render(BombermanGame.gc));
+        BombermanGame.board.getEntities().forEach(g -> g.render(BombermanGame.gcForPlayer));
+        BombermanGame.board.getEnemies().forEach(g -> g.render(BombermanGame.gcForPlayer));
+    }
+
+    public void update() {
+        for (int i = 0; i < entities.size(); i++) {
+            entities.get(i).update();
+        }
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update();
         }
     }
 }

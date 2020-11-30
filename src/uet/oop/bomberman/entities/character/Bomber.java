@@ -16,6 +16,7 @@ import uet.oop.bomberman.sound.Sound;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Bomber extends movingObj {
 
@@ -57,9 +58,7 @@ public class Bomber extends movingObj {
         this.imgFrameRight = new Image[3];
         imgFrameRight[0] = right0;
         imgFrameRight[1] = right1;
-        imgFrameRight[2] = right2
-
-        ;
+        imgFrameRight[2] = right2;
     }
 
     private void setFrameLeft() {
@@ -438,18 +437,27 @@ public class Bomber extends movingObj {
             HashSet<String> maskPlayer2 = getMask(obj);
             int size = maskPlayer2.size();
             maskPlayer1.retainAll(maskPlayer2);
-//            if (obj instanceof Portal) {
-//                Portal other = (Portal) obj;
-//                if (other.getActive()) {
-//                    if (maskPlayer1.size() > 0) {
-//                        Sound.play("CRYST_UP");
-//                    }
-//                }
-//            } else {
-            if (!(obj instanceof Portal) && !obj.isActive()) {
-                if (maskPlayer1.size() > 0) {
-                    obj.setActive(true);
-                    Sound.play("Item");
+            if (obj instanceof Portal) {
+                Portal other = (Portal) obj;
+                if (other.getActive()) {
+                    if (maskPlayer1.size() > 300) {
+                        try {
+                            TimeUnit.SECONDS.sleep(2);
+                            this.setImg(Sprite.player_right.getFxImage());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Sound.play("CRYST_UP");
+                        Board.countDownTime = 181 * 60;
+                        BombermanGame.board.changeLevel(BombermanGame.board.getLevel() + 1);
+                    }
+                }
+            } else {
+                if (!(obj instanceof Portal) && !obj.isActive()) {
+                    if (maskPlayer1.size() > 0) {
+                        obj.setActive(true);
+                        Sound.play("Item");
+                    }
                 }
             }
         }

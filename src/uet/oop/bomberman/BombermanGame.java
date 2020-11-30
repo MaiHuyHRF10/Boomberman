@@ -2,115 +2,183 @@ package uet.oop.bomberman;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
-import java.awt.*;
+
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class BombermanGame extends Application {
-    private GraphicsContext gc;
-    private Canvas canvas;
-    private GraphicsContext gcForPlayer;
-    private Scene gameScene;
-    public static Board board = new Board();
+    public static GraphicsContext gc;
+    public static Canvas canvas;
+    public static GraphicsContext gcForPlayer;
+    public static Scene gameScene;
+    private java.util.List<Text> textList = new ArrayList<>();
+
+    public static Board board;
     public static KeyBoard keyBoard;
     public static Text textScore;
     public static Text textTime;
+
+    private static final int MENU_WIDTH = 992;
+    private static final int MENU_HEIGHT = 480;
+    private AnchorPane menuPane;
+    private Scene menuScene;
+    private Stage menuStage;
+    private Button startButton;
+
+
+
 
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
     }
 
-    @Override
-    public void start(Stage stage) throws FileNotFoundException {
-        // Tao Canvas
-        initializeStage();
-        stage.setScene(gameScene);
+
+
+    public void start(Stage stage) {
+        createMenu();
+        stage = menuStage;
+        Stage finalStage = stage;
         stage.show();
 
-        AnimationTimer timer = new AnimationTimer() {
+        startButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(long l) {
-                //collide();
-                update();
-                render();
+            public void handle(MouseEvent event) {
+                if (event.getButton().equals(MouseButton.PRIMARY)) {
+                    initializeStage();
+                    finalStage.setScene(gameScene);
+                    finalStage.show();
+
+                    AnimationTimer timer = new AnimationTimer() {
+                        @Override
+                        public void handle(long l) {
+                            update();
+                            board.render();
+                            board.update();
+                        }
+                    };
+
+                    timer.start();
+                    try {
+                        initNewGame();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    keyBoard.status(gameScene); // bat su kien
+                    Sound.play("ghost");
+                    board.countDown();
+                }
+
             }
-        };
-        timer.start();
+        });
 
-        initNewGame();
-        keyBoard.status(gameScene); // bat su kien
-        Sound.play("ghost");
-        board.countDown();
     }
 
-    public void initNewGame() throws FileNotFoundException {
-        keyBoard = new KeyBoard();
-        board.createMapLevel1();
+
+    public void initNewGame () throws FileNotFoundException {
+            board = new Board();
+            keyBoard = new KeyBoard();
+            board.getGameLevel().createMapLevel(1);
     }
 
-    public void initializeStage() {
-        canvas = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2));
-        gc = canvas.getGraphicsContext2D();
+    public void createTextScene () {
+        Text textS = new Text(30, 35, "Score: ");
+        Text textT = new Text(300, 35, "Time: ");
 
-        Canvas canvasForPlayer = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2));
-        gcForPlayer = canvasForPlayer.getGraphicsContext2D();
-        Text text = new Text(30, 35, "Score: ");
-        Text text1 = new Text(300, 35, "Time: ");
-        text.setFill(Color.WHITE);
-        text.setFont(new Font(20));
-        text1.setFill(Color.WHITE);
-        text1.setFont(new Font(20));
+        textS.setFill(Color.WHITE);
+        textS.setFont(new Font(20));
+
+        textT.setFill(Color.WHITE);
+        textT.setFont(new Font(20));
+
+        textList.add(textS);
+        textList.add(textT);
+
         textScore = new Text(130, 35, String.valueOf(board.score));
         textScore.setFill(Color.WHITE);
         textScore.setFont(new Font(20));
+
+        textList.add(textScore);
+
         textTime = new Text(400, 35, String.valueOf(board.countDownTime / 60));
         textTime.setFill(Color.WHITE);
         textTime.setFont(new Font(20));
+
+        textList.add(textTime);
+    }
+
+    public void initializeStage () {
+        canvas = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2));
+        gc = canvas.getGraphicsContext2D();
+
+
+        Canvas canvasForPlayer = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2));
+        gcForPlayer = canvasForPlayer.getGraphicsContext2D();
+
+        createTextScene();
         Group gameRoot = new Group();
         gameRoot.getChildren().add(canvas);
         gameRoot.getChildren().add(canvasForPlayer);
-        gameRoot.getChildren().addAll(text, text1, textScore, textTime);
 
-        // Tao scene
+        gameRoot.getChildren().addAll(textList);
+
         gameScene = new Scene(gameRoot, Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2), Color.BLACK);
 
     }
 
-    public void update() {
-        for (int i = 0; i < board.getEntities().size(); i++) {
-            board.getEntities().get(i).update();
-        }
-        for (int i = 0; i < board.getEnemies().size(); i++) {
-            board.getEnemies().get(i).update();
-        }
+    public void update () {
         textScore.setText(String.valueOf(board.score));
         textTime.setText(String.valueOf(board.countDown() / 60));
     }
 
-    public void render() {
-        gcForPlayer.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        board.getStillObjects().forEach(g -> g.render(gc));
-        board.getEntities().forEach(g -> g.render(gcForPlayer));
-        board.getEnemies().forEach(g -> g.render(gcForPlayer));
+
+
+    private void createMenu() {
+        menuPane = new AnchorPane();
+        menuScene = new Scene(menuPane, MENU_WIDTH, MENU_HEIGHT, Color.BLACK);
+        menuStage = new Stage();
+        menuStage.setScene(menuScene);
+        createBackGround();
+        createStartButton();
+    }
+
+    private void createStartButton () {
+        InputStream input = getClass().getResourceAsStream("/button/start.png");
+
+        javafx.scene.image.Image image = new Image(input);
+        ImageView imageView = new ImageView(image);
+        startButton = new Button("", imageView);
+        startButton.setStyle("-fx-background-color: #000000; ");
+
+        menuPane.getChildren().add(startButton);
+        startButton.setLayoutX(450);
+        startButton.setLayoutY(350);
 
     }
 
-    public Entity getEntity(double x, double y) {
-        for (Entity temp : board.getEntities()) {
-            if (temp.getX() == x && temp.getY() == y) return temp;
-        }
-        return null;
+    private void createBackGround () {
+        Image back = new Image("/background/bomba.png", MENU_WIDTH, MENU_HEIGHT, false, true);
+        BackgroundImage backMenu = new BackgroundImage(back, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
+        menuPane.setBackground(new Background(backMenu));
     }
 
 }

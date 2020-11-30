@@ -25,15 +25,19 @@ public class Brick extends Entity {
     @Override
     public void update() {
         if (remove && timeAfterRemove == 0) {
-            BombermanGame.board.removeEntityAt(this.x, this.y);
+//            BombermanGame.board.removeEntityAt(this.x, this.y);
             if (entityBelow != null) {
                 if (!(entityBelow instanceof Portal)) {
                     BombermanGame.board.addEntity(entityBelow);
                     Board.map[(int) this.y][(int) this.x] = ' ';
+                    BombermanGame.board.removeEntityAt(this.x, this.y);
                 } else {
-                    BombermanGame.board.addStillObject(entityBelow);
+                    int index = BombermanGame.board.index(this.x, this.y);
+                    BombermanGame.board.getEntities().set(index, entityBelow);
+//                   BombermanGame.board.addStillObject(entityBelow);
                 }
             } else {
+                BombermanGame.board.removeEntityAt(this.x, this.y);
                 Board.map[(int) this.y][(int) this.x] = ' ';
             }
         }

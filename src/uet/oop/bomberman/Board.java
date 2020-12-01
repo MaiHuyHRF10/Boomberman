@@ -183,6 +183,7 @@ public class Board {
             if (left == 0) {
                 left = 3;
                 level = 1;
+                Board.scorePrevious = 0;
             }
             player.setHealth(left);
             scanner.close();

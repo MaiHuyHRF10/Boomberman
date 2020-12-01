@@ -15,7 +15,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
@@ -27,6 +26,7 @@ import uet.oop.bomberman.sound.Sound;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class BombermanGame extends Application {
     public static GraphicsContext gc;
@@ -81,29 +81,18 @@ public class BombermanGame extends Application {
                             update();
                             board.render();
                             board.update();
-                            if (Board.getPlayer().isDie()) {
-                                Group gameRoot = new Group();
-                                Text textOver = new Text(250, 240, "Game Over !!!");
-
-                                textOver.setFont(Font.font("Arial", FontWeight.BOLD, 80));
-                                textOver.setFill(Color.WHITE);
-
-                                gameRoot.getChildren().add(textOver);
-                                gameScene = new Scene(gameRoot, Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2), Color.BLACK);
+                            if (Board.getPlayer().isDie()  || Board.countDownTime < 0) {
+                                String res = "Game Over !!!";
+                                endGame(res);
                                 finalStage.setScene(gameScene);
                             }
                             if (Board.getPlayer().isWin()) {
+                                Board.scorePrevious = 0;
                                 BombermanGame.board.setLevel(1);
                                 Board.getPlayer().setHealth(3);
                                 Board.getPlayer().updateStatus();
-                                Group gameRoot = new Group();
-                                Text textOver = new Text(250, 240, "YOU WIN !!!");
-
-                                textOver.setFont(Font.font("Arial", FontWeight.BOLD, 80));
-                                textOver.setFill(Color.WHITE);
-
-                                gameRoot.getChildren().add(textOver);
-                                gameScene = new Scene(gameRoot, Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2), Color.BLACK);
+                                String res = "YOU WIN !!!";
+                                endGame(res);
                                 finalStage.setScene(gameScene);
                             }
                         }
@@ -112,7 +101,7 @@ public class BombermanGame extends Application {
                     timer.start();
 
                     keyBoard.status(gameScene); // bat su kien
-                    //Sound.play("ghost");
+                    Sound.play("ghost");
                     board.countDown();
                 }
 
@@ -141,13 +130,13 @@ public class BombermanGame extends Application {
         textList.add(textS);
         textList.add(textT);
 
-        textScore = new Text(130, 35, String.valueOf(board.score));
+        textScore = new Text(130, 35, String.valueOf(Board.score + Board.scorePrevious));
         textScore.setFill(Color.WHITE);
         textScore.setFont(new Font(20));
 
         textList.add(textScore);
 
-        textTime = new Text(290, 35, String.valueOf(board.countDownTime / 60));
+        textTime = new Text(290, 35, String.valueOf(Board.countDownTime / 60));
         textTime.setFill(Color.WHITE);
         textTime.setFont(new Font(20));
 
@@ -168,7 +157,7 @@ public class BombermanGame extends Application {
         textLeft.setFont(new Font(20));
         textList.add(textLeft);
 
-        playerHealth = new Text(450, 35, String.valueOf(board.getPlayer().getHealth()));
+        playerHealth = new Text(450, 35, String.valueOf(Board.getPlayer().getHealth()));
         playerHealth.setFill(Color.WHITE);
         playerHealth.setFont(new Font(20));
         textList.add(playerHealth);
@@ -194,9 +183,9 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
-        playerHealth.setText(String.valueOf(board.getPlayer().getHealth()));
+        playerHealth.setText(String.valueOf(Board.getPlayer().getHealth()));
         textLevel.setText(String.valueOf(board.getLevel()));
-        textScore.setText(String.valueOf(board.score));
+        textScore.setText(String.valueOf(Board.score + Board.scorePrevious));
         textTime.setText(String.valueOf(board.countDown() / 60));
     }
 
@@ -230,4 +219,14 @@ public class BombermanGame extends Application {
         menuPane.setBackground(new Background(backMenu));
     }
 
+    private void endGame(String string) {
+        Group gameRoot = new Group();
+        Text textOver = new Text(250, 240, string);
+
+        textOver.setFont(Font.font("Arial", FontWeight.BOLD, 80));
+        textOver.setFill(Color.WHITE);
+
+        gameRoot.getChildren().add(textOver);
+        gameScene = new Scene(gameRoot, Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2), Color.BLACK);
+    }
 }

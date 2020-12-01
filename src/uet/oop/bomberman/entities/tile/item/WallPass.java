@@ -6,7 +6,6 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 
 public class WallPass extends Item {
-    //private int timeActive = 600;
 
     public void setActive(boolean active) {
         this.active = active;

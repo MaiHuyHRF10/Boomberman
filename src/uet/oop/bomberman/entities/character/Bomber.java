@@ -6,16 +6,13 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.Brick;
-import uet.oop.bomberman.entities.tile.Wall;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.entities.tile.item.Portal;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -115,8 +112,7 @@ public class Bomber extends movingObj {
 
     public void addBomb(Bomb bomb) {
         boolean check = true;
-        for (int i = 0; i < bombs.size(); i++) {
-            Bomb temp = bombs.get(i);
+        for (Bomb temp : bombs) {
             if (temp.getX() == bomb.getX() && temp.getY() == bomb.getY()) {
                 check = false;
                 break;
@@ -142,7 +138,7 @@ public class Bomber extends movingObj {
     @Override
     public void update() {
         collide();
-        for (int i = 0; i < bombs.size(); i++) {
+        for (int i = 0; i< bombs.size(); i++) {
             updateWallFromBomb(bombs.get(i));
             bombs.get(i).update();
         }
@@ -159,19 +155,23 @@ public class Bomber extends movingObj {
             } else if (time < 30) {
                 this.setImg(imgFrameDie[2]);
                 time++;
+            } else if (time < 40) {
+                this.setImg(null);
+                time++;
             } else {
                 if (health == 0) {
-                    this.setImg(null);
                     die = true;
-//                    try {
-//                        TimeUnit.SECONDS.sleep(1);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-                    //                   }
+                    BombermanGame.board.removeEntityAt(this.x, this.y);
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     this.x = 1;
                     this.y = 1;
                     this.setImg(Sprite.player_right.getFxImage());
+                    //BombermanGame.board.removeEntityAt(this.x , this. y);
                     alive = true;
                     time = 0;
                 }
@@ -179,17 +179,18 @@ public class Bomber extends movingObj {
         }
     }
 
+
     @Override
     public void render(GraphicsContext gc) {
         super.render(gc);
-        for (int i = 0; i < bombs.size(); i++) {
-            bombs.get(i).render(gc);
+        for (Bomb bomb : bombs) {
+            bomb.render(gc);
         }
     }
 
     public void placeBomb() {
         if (BombermanGame.keyBoard.space && bombs.size() < Board.bombCount) {
-            if (!(BombermanGame.board.getEntity((double) xBomb(), (double) yBomb()) instanceof Brick)) {
+            if (!(BombermanGame.board.getEntity(xBomb(), yBomb()) instanceof Brick)) {
                 Bomb bomb = new Bomb(xBomb(), yBomb(), false, Sprite.bomb.getFxImage());
                 addBomb(bomb);
             }
@@ -203,9 +204,7 @@ public class Bomber extends movingObj {
             }
         }
         for (int i = 0; i < BombermanGame.board.getEnemies().size(); i++) {
-            if (BombermanGame.board.getEnemies().get(i) instanceof Enemy) {
-                collideToDie((Enemy) BombermanGame.board.getEnemies().get(i));
-            }
+            collideToDie(BombermanGame.board.getEnemies().get(i));
         }
     }
 
@@ -518,7 +517,6 @@ public class Bomber extends movingObj {
         if (alive) {
             HashSet<String> maskPlayer1 = getMask(this);
             HashSet<String> maskPlayer2 = getMask(obj);
-            int size = maskPlayer2.size();
             maskPlayer1.retainAll(maskPlayer2);
             if (obj instanceof Portal) {
                 Portal other = (Portal) obj;
@@ -530,6 +528,7 @@ public class Bomber extends movingObj {
                             Sound.play("CRYST_UP");
                             Board.countDownTime = 181 * 60;
                             int newLevel = BombermanGame.board.getLevel() + 1;
+                            Board.scorePrevious += Board.score;
                             BombermanGame.board.changeLevel(newLevel);
                             BombermanGame.board.setLevel(newLevel);
                             updateStatus();
@@ -578,7 +577,7 @@ public class Bomber extends movingObj {
         final String FILENAME = "res/levels/save.txt";
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME, true))) {
             int left = BombermanGame.board.getLeft();
-            bw.write(BombermanGame.board.getLevel() + " " + left);
+            bw.write(BombermanGame.board.getLevel() + " " + left + " " + Board.scorePrevious);
 
         } catch (IOException e) {
             e.printStackTrace();

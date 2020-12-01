@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.bomb.Explosion;
 
 import java.util.stream.IntStream;
 

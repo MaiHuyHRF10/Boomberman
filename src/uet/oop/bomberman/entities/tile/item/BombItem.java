@@ -4,11 +4,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.entities.tile.item.Item;
 
 public class BombItem extends Item {
     private boolean active = false;
-    private boolean check = false;
 
     public void setActive(boolean active) {
         this.active = active;
@@ -24,17 +22,7 @@ public class BombItem extends Item {
 
         if (active) {
             remove = true;
-//            if (!check) {
             Board.bombCount ++;
-                //check = true;
-            //}
-//            if (timeActive > 0) {
-//                timeActive --;
-//            } else {
-//                Board.bombCount --;
-//                active = false;
-//            }
-        //} else if (remove){
             BombermanGame.board.removeEntityAt(this.x, this.y);
         }
     }

@@ -41,11 +41,11 @@ public class Explosion extends Entity {
 
     public void update(int direction, int time) {
         if (!Board.flamePass) {
-            BombermanGame.board.getPlayer().collideToDie(this);
+            Board.getPlayer().collideToDie(this);
         }
-        int sizeBomb = BombermanGame.board.getPlayer().getBombs().size();
+        int sizeBomb = Board.getPlayer().getBombs().size();
         for (int i = 0; i < sizeBomb; i++) {
-            BombermanGame.board.getPlayer().getBombs().get(i).collideWithBombOther(this);
+            Board.getPlayer().getBombs().get(i).collideWithBombOther(this);
         }
         int sizeEnemy = BombermanGame.board.getEnemies().size();
         for (int i = 0; i < sizeEnemy; i++) {

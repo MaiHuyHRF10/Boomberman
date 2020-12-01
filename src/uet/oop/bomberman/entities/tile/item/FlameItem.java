@@ -8,7 +8,6 @@ import uet.oop.bomberman.entities.tile.item.Item;
 
 public class FlameItem extends Item {
     private boolean active = false;
-    private boolean check = false;
 
     public void setActive(boolean active) {
         this.active = active;

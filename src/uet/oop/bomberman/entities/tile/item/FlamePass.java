@@ -20,18 +20,6 @@ public class FlamePass extends Item {
     @Override
     public void update() {
 
-//        if (active) {
-//            remove = true;
-//            Board.flamePass = true;
-//            if (timeActive > 0) {
-//                timeActive--;
-//            } else {
-//                Board.flamePass = false;
-//                active = false;
-//            }
-//        } else if (remove) {
-//            BombermanGame.board.removeEntityAt(this.x, this.y);
-//        }
         if (active) {
             remove = true;
             Board.flamePass = true;

@@ -2,7 +2,6 @@ package uet.oop.bomberman.level;
 
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.enemy.Balloom;
 import uet.oop.bomberman.entities.character.enemy.Doll;
 import uet.oop.bomberman.entities.character.enemy.Kondoria;
@@ -125,6 +124,7 @@ public class Level {
         }
         Board.getPlayer().setX(1);
         Board.getPlayer().setY(1);
+        Board.score = 0;
         BombermanGame.keyBoard.right = false;
         BombermanGame.keyBoard.left = false;
         BombermanGame.keyBoard.up = false;

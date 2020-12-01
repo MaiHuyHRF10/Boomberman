@@ -29,6 +29,7 @@ public class Board {
     public static boolean bombPass = false;
     public static boolean wallPass = false;
     public static int countDownTime = 181 * 60;
+    public static int scorePrevious;
 
     private static List<Entity> entities = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
@@ -178,6 +179,7 @@ public class Board {
             Scanner scanner = new Scanner(file);
             level = scanner.nextInt();
             int left = scanner.nextInt();
+            scorePrevious = scanner.nextInt();
             if (left == 0) {
                 left = 3;
                 level = 1;

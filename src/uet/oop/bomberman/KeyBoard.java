@@ -1,11 +1,10 @@
 package uet.oop.bomberman;
 
 import javafx.scene.Scene;
-import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class KeyBoard {
-    public boolean right, left, up, down, space;
+    public boolean right, left, up, down, space, stop, start;
 
     public KeyBoard() {
         right = false;
@@ -13,7 +12,9 @@ public class KeyBoard {
         up = false;
         down = false;
         space = false;
-    };
+        stop = false;
+        start = true;
+    }
 
     public void status(Scene gameScene) {
         gameScene.setOnKeyPressed(event -> {
@@ -40,11 +41,11 @@ public class KeyBoard {
             switch (event.getCode()) {
                 case LEFT:
                     left = false;
-                    BombermanGame.board.getPlayer().setImg(Sprite.player_left.getFxImage());
+                    Board.getPlayer().setImg(Sprite.player_left.getFxImage());
                     break;
                 case RIGHT:
                     right = false;
-                    BombermanGame.board.getPlayer().setImg(Sprite.player_right.getFxImage());
+                    Board.getPlayer().setImg(Sprite.player_right.getFxImage());
                     break;
                 case UP:
                     up = false;

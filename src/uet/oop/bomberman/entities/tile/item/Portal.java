@@ -9,7 +9,6 @@ import uet.oop.bomberman.entities.Entity;
 public class Portal extends Item {
 
     private boolean active = false;
-    private boolean check = false;
 
     public boolean getActive() {
         return this.active;
@@ -31,6 +30,8 @@ public class Portal extends Item {
         }
         if (active) {
             Board.map[(int) this.y][(int) this.x] = ' ';
+        } else {
+            Board.map[(int) this.y][(int) this.x] = '#';
         }
     }
 }

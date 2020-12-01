@@ -19,6 +19,7 @@ import java.util.Scanner;
 public class Board {
     public static final int WIDTH = 31;
     public static final int HEIGHT = 13;
+    public static final int MAX_LEVEL = 3;
     public static char[][] map = new char[HEIGHT][WIDTH];
 
     public static int bombCount = 1;
@@ -37,11 +38,12 @@ public class Board {
     private static Bomber player;
     private Level gameLevel;
     private int level;
+    public static File file = new File("res/levels/save.txt");
 
 
     public Board() {
         player = new Bomber(1, 1, Sprite.player_right.getFxImage(), speedOfPlayer);
-        level = 1;
+        loadLevel();
         gameLevel = new Level(this);
     }
 
@@ -54,6 +56,11 @@ public class Board {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        bombCount = 1;
+        bombRadius = 1;
+        flamePass = false;
+        bombPass = false;
+        wallPass = false;
         this.level = level;
     }
 
@@ -95,6 +102,10 @@ public class Board {
 
     public static Bomber getPlayer() {
         return player;
+    }
+
+    public int getLeft() {
+        return getPlayer().getHealth();
     }
 
     public void setPlayer(Bomber player) {
@@ -160,5 +171,25 @@ public class Board {
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).update();
         }
+    }
+
+    public void loadLevel() {
+        try {
+            Scanner scanner = new Scanner(file);
+            level = scanner.nextInt();
+            int left = scanner.nextInt();
+            if (left == 0) {
+                left = 3;
+                level = 1;
+            }
+            player.setHealth(left);
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean getIsDie() {
+        return getPlayer().isDie();
     }
 }

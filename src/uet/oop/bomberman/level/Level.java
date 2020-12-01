@@ -114,6 +114,12 @@ public class Level {
                         boardGame.addEntity(objecta);
                         objecta.addEntityBelow(objectBelow7);
                         break;
+                    case 'd':
+                        Brick objectd = new Brick(j, i, Sprite.brick.getFxImage());
+                        Detonator objectBelow8 = new Detonator(j, i, Sprite.powerup_detonator.getFxImage());
+                        boardGame.addEntity(objectd);
+                        objectd.addEntityBelow(objectBelow8);
+                        break;
                 }
             }
         }
@@ -126,5 +132,4 @@ public class Level {
         Board.getPlayer().setImg(Sprite.player_right.getFxImage());
         boardGame.addEntity(Board.getPlayer());
     }
-
 }

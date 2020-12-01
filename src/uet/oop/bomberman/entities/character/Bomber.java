@@ -8,11 +8,16 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.Brick;
+import uet.oop.bomberman.entities.tile.Wall;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.entities.tile.item.Portal;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +36,9 @@ public class Bomber extends movingObj {
     private int down = 0;
     private int time = 0; // time to die
     private final int animate = 5;
+    private int health;
+    private boolean win = false;
+    private boolean die = false;
     private List<Bomb> bombs = new ArrayList<>();
 
 
@@ -152,7 +160,21 @@ public class Bomber extends movingObj {
                 this.setImg(imgFrameDie[2]);
                 time++;
             } else {
-                this.setImg(null);
+                if (health == 0) {
+                    this.setImg(null);
+                    die = true;
+//                    try {
+//                        TimeUnit.SECONDS.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+                    //                   }
+                } else {
+                    this.x = 1;
+                    this.y = 1;
+                    this.setImg(Sprite.player_right.getFxImage());
+                    alive = true;
+                    time = 0;
+                }
             }
         }
     }
@@ -306,26 +328,41 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-                if (Board.map[yPos][xPos2] != ' ' || Board.map[yPos2][xPos2] != ' ') {
-                    if (Board.map[(int) y][xPos2] != ' ') {
-                        if (y == (int) y) {
-                            this.x = xPos2 - distance;
-                        } else {
-                            if (this.y - (int) y >= 0.7) {
-                                this.y = (int) y + 1;
-                            } else {
-                                this.x = xPos2 - distance;
-                            }
-                        }
-                    } else if (Board.map[(int) (y + 1)][xPos2] != 0) {
-                        if (this.y - (int) y <= 0.3) {
-                            this.y = (int) y;
+            Entity temp1 = BombermanGame.board.getEntity(xPos2, yPos);
+            Entity temp2 = BombermanGame.board.getEntity(xPos2, yPos2);
+            boolean check1, check2, kt1, kt2;
+            if (!Board.wallPass) {
+                check1 = Board.map[yPos][xPos2] == '#' || temp1 instanceof Brick || Board.map[yPos][xPos2] == 'B';
+                check2 = Board.map[yPos2][xPos2] == '#' || temp2 instanceof Brick || Board.map[yPos2][xPos2] == 'B';
+                kt1 = Board.map[(int) y][xPos2] != ' ';
+                kt2 = Board.map[(int) (y + 1)][xPos2] != ' ';
+            } else {
+                check1 = Board.map[yPos][xPos2] == '#' || Board.map[yPos][xPos2] == 'B';
+                check2 = Board.map[yPos2][xPos2] == '#' || Board.map[yPos2][xPos2] == 'B';
+                kt1 = Board.map[(int) y][xPos2] != ' ' && !(BombermanGame.board.getEntity(xPos2, (int) y) instanceof Brick);
+                kt2 = Board.map[(int) (y + 1)][xPos2] != ' ' && !(BombermanGame.board.getEntity(xPos2, (int) (y + 1)) instanceof Brick);
+            }
+            if (check1 || check2) {
+                //if (Board.map[yPos][xPos2] != ' ' || Board.map[yPos2][xPos2] != ' ') {
+                if (kt1) {
+                    if (y == (int) y) {
+                        this.x = xPos2 - distance;
+                    } else {
+                        if (this.y - (int) y >= 0.7) {
+                            this.y = (int) y + 1;
                         } else {
                             this.x = xPos2 - distance;
                         }
                     }
+                } else if (kt2) {
+                    if (this.y - (int) y <= 0.3) {
+                        this.y = (int) y;
+                    } else {
+                        this.x = xPos2 - distance;
+                    }
                 }
             }
+        }
     }
 
     public void checkToMapMoveLeft() {
@@ -334,8 +371,22 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y + 1);
 
         if (xPos >= 0 && xPos < 31 && yPos >= 0 && yPos2 < 13) {
-            if (Board.map[yPos][xPos] != ' ' || Board.map[yPos2][xPos] != ' ') {
-                if (Board.map[(int) y][xPos] != ' ') {
+            Entity temp1 = BombermanGame.board.getEntity(xPos, yPos);
+            Entity temp2 = BombermanGame.board.getEntity(xPos, yPos2);
+            boolean check1, check2, kt1, kt2;
+            if (!Board.wallPass) {
+                check1 = Board.map[yPos][xPos] == '#' || temp1 instanceof Brick || Board.map[yPos][xPos] == 'B';
+                check2 = Board.map[yPos2][xPos] == '#' || temp2 instanceof Brick || Board.map[yPos2][xPos] == 'B';
+                kt1 = Board.map[(int) y][xPos] != ' ';
+                kt2 = Board.map[(int) (y + 1)][xPos] != ' ';
+            } else {
+                check1 = Board.map[yPos][xPos] == '#' || Board.map[yPos][xPos] == 'B';
+                check2 = Board.map[yPos2][xPos] == '#' || Board.map[yPos2][xPos] == 'B';
+                kt1 = Board.map[(int) y][xPos] != ' ' && !(BombermanGame.board.getEntity(xPos, (int) y) instanceof Brick);
+                kt2 = Board.map[(int) (y + 1)][xPos] != ' ' && !(BombermanGame.board.getEntity(xPos, (int) (y + 1)) instanceof Brick);
+            }
+            if (check1 || check2) {
+                if (kt1) {
                     if (this.y == (int) y) {
                         this.x = xPos + 1;
                     } else {
@@ -345,7 +396,7 @@ public class Bomber extends movingObj {
                             this.x = xPos + 1;
                         }
                     }
-                } else if (Board.map[(int) (y + 1)][xPos] != ' ') {
+                } else if (kt2) {
                     if (this.y - (int) y <= 0.3) {
                         this.y = (int) y;
                     } else {
@@ -367,14 +418,28 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y - speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (Board.map[yPos2][xPos] != ' ' || Board.map[yPos2][xPos2] != ' ') {
-                if (Board.map[yPos2][xPos] != ' ') {
+            Entity temp1 = BombermanGame.board.getEntity(xPos, yPos2);
+            Entity temp2 = BombermanGame.board.getEntity(xPos2, yPos2);
+            boolean check1, check2, kt1, kt2;
+            if (!Board.wallPass) {
+                check1 = Board.map[yPos2][xPos] == '#' || temp1 instanceof Brick || Board.map[yPos2][xPos] == 'B';
+                check2 = Board.map[yPos2][xPos2] == '#' || temp2 instanceof Brick || Board.map[yPos2][xPos2] == 'B';
+                kt1 = Board.map[yPos2][xPos] != ' ';
+                kt2 = Board.map[yPos2][xPos2] != ' ';
+            } else {
+                check1 = Board.map[yPos2][xPos] == '#' || Board.map[yPos2][xPos] == 'B';
+                check2 = Board.map[yPos2][xPos2] == '#' || Board.map[yPos2][xPos2] == 'B';
+                kt1 = Board.map[yPos2][xPos] != ' ' && !(BombermanGame.board.getEntity(xPos, yPos) instanceof Brick);
+                kt2 = Board.map[yPos2][xPos2] != ' ' && !(BombermanGame.board.getEntity(xPos2, yPos2) instanceof Brick);
+            }
+            if (check1 || check2) {
+                if (kt1) {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos2 + 1;
                     }
-                } else if (Board.map[yPos2][xPos2] != ' ') {
+                } else if (kt2) {
                     if (this.x - (int) x <= 0.45) {
                         this.x = (int) x + 1 - distance;
                     } else {
@@ -396,14 +461,28 @@ public class Bomber extends movingObj {
         int yPos2 = (int) (y + 1 + speed);
 
         if (xPos >= 0 && xPos2 < 31 && yPos >= 0 && yPos2 < 13) {
-            if (Board.map[yPos2][xPos] != ' ' || Board.map[yPos2][xPos2] != ' ') {
-                if (Board.map[(int) (y + 1)][xPos] != ' ') {
+            Entity temp1 = BombermanGame.board.getEntity(xPos, yPos2);
+            Entity temp2 = BombermanGame.board.getEntity(xPos2, yPos2);
+            boolean check1, check2, kt1, kt2;
+            if (!Board.wallPass) {
+                check1 = Board.map[yPos2][xPos] == '#' || temp1 instanceof Brick || Board.map[yPos2][xPos] == 'B';
+                check2 = Board.map[yPos2][xPos2] == '#' || temp2 instanceof Brick || Board.map[yPos2][xPos2] == 'B';
+                kt1 = Board.map[(int) (y + 1)][xPos] != ' ';
+                kt2 = Board.map[(int) (y + 1)][xPos2] != ' ';
+            } else {
+                check1 = Board.map[yPos2][xPos] == '#' || Board.map[yPos2][xPos] == 'B';
+                check2 = Board.map[yPos2][xPos2] == '#' || Board.map[yPos2][xPos2] == 'B';
+                kt1 = Board.map[(int) (y + 1)][xPos] != ' ' && !(BombermanGame.board.getEntity(xPos, (int) (y + 1)) instanceof Brick);
+                kt2 = Board.map[(int) (y + 1)][xPos2] != ' ' && !(BombermanGame.board.getEntity(xPos2, (int) (y + 1)) instanceof Brick);
+            }
+            if (check1 || check2) {
+                if (kt1) {
                     if (this.x - (int) x >= 0.7) {
                         this.x = (int) x + 1;
                     } else {
                         this.y = yPos;
                     }
-                } else if (Board.map[(int) (y + 1)][xPos2] != ' ') {
+                } else if (kt2) {
                     if (this.x - (int) x <= 0.45) {
                         this.x = (int) x + 1 - distance;
                     } else {
@@ -421,15 +500,19 @@ public class Bomber extends movingObj {
             int size = maskPlayer2.size();
             maskPlayer1.retainAll(maskPlayer2);
             if (maskPlayer1.size() > 0) {
-                setAlive(false);
-                Sound.stop();
+                health--;
+                updateStatus();
+                if (health == 0) {
+                    setAlive(false);
 
-                Sound.play("AA126_11");
-
+                    Sound.play("endgame3");
+                } else {
+                    Sound.play("AA126_11");
+                    setAlive(false);
+                }
             }
         }
     }
-
 
     public void collideWithItem(Item obj) {
         if (alive) {
@@ -441,15 +524,23 @@ public class Bomber extends movingObj {
                 Portal other = (Portal) obj;
                 if (other.getActive()) {
                     if (maskPlayer1.size() > 300) {
+                        if (BombermanGame.board.getLevel() == Board.MAX_LEVEL) {
+                            win = true;
+                        } else {
+                            Sound.play("CRYST_UP");
+                            Board.countDownTime = 181 * 60;
+                            int newLevel = BombermanGame.board.getLevel() + 1;
+                            BombermanGame.board.changeLevel(newLevel);
+                            BombermanGame.board.setLevel(newLevel);
+                            updateStatus();
+                        }
                         try {
-                            TimeUnit.SECONDS.sleep(2);
+                            TimeUnit.SECONDS.sleep(1);
                             this.setImg(Sprite.player_right.getFxImage());
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        Sound.play("CRYST_UP");
-                        Board.countDownTime = 181 * 60;
-                        BombermanGame.board.changeLevel(BombermanGame.board.getLevel() + 1);
+
                     }
                 }
             } else {
@@ -474,4 +565,35 @@ public class Bomber extends movingObj {
         }
     }
 
+    public int getHealth() {
+        return this.health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void updateStatus() {
+        Board.file.delete();
+        final String FILENAME = "res/levels/save.txt";
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME, true))) {
+            int left = BombermanGame.board.getLeft();
+            bw.write(BombermanGame.board.getLevel() + " " + left);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setDie(boolean die) {
+        this.die = die;
+    }
+
+    public boolean isDie() {
+        return die;
+    }
+
+    public boolean isWin() {
+        return win;
+    }
 }

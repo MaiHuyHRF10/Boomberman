@@ -15,6 +15,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -35,8 +37,10 @@ public class BombermanGame extends Application {
 
     public static Board board;
     public static KeyBoard keyBoard;
-    public static Text textScore;
-    public static Text textTime;
+    private Text textScore;
+    private Text textTime;
+    private Text textLevel;
+    private Text playerHealth;
 
     private static final int MENU_WIDTH = 992;
     private static final int MENU_HEIGHT = 480;
@@ -46,12 +50,9 @@ public class BombermanGame extends Application {
     private Button startButton;
 
 
-
-
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
     }
-
 
 
     public void start(Stage stage) {
@@ -64,6 +65,12 @@ public class BombermanGame extends Application {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
+                    try {
+                        initNewGame();
+                        createTextScene();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     initializeStage();
                     finalStage.setScene(gameScene);
                     finalStage.show();
@@ -74,17 +81,38 @@ public class BombermanGame extends Application {
                             update();
                             board.render();
                             board.update();
+                            if (Board.getPlayer().isDie()) {
+                                Group gameRoot = new Group();
+                                Text textOver = new Text(250, 240, "Game Over !!!");
+
+                                textOver.setFont(Font.font("Arial", FontWeight.BOLD, 80));
+                                textOver.setFill(Color.WHITE);
+
+                                gameRoot.getChildren().add(textOver);
+                                gameScene = new Scene(gameRoot, Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2), Color.BLACK);
+                                finalStage.setScene(gameScene);
+                            }
+                            if (Board.getPlayer().isWin()) {
+                                BombermanGame.board.setLevel(1);
+                                Board.getPlayer().setHealth(3);
+                                Board.getPlayer().updateStatus();
+                                Group gameRoot = new Group();
+                                Text textOver = new Text(250, 240, "YOU WIN !!!");
+
+                                textOver.setFont(Font.font("Arial", FontWeight.BOLD, 80));
+                                textOver.setFill(Color.WHITE);
+
+                                gameRoot.getChildren().add(textOver);
+                                gameScene = new Scene(gameRoot, Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2), Color.BLACK);
+                                finalStage.setScene(gameScene);
+                            }
                         }
                     };
 
                     timer.start();
-                    try {
-                        initNewGame();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+
                     keyBoard.status(gameScene); // bat su kien
-                    Sound.play("ghost");
+                    //Sound.play("ghost");
                     board.countDown();
                 }
 
@@ -94,15 +122,15 @@ public class BombermanGame extends Application {
     }
 
 
-    public void initNewGame () throws FileNotFoundException {
-            board = new Board();
-            keyBoard = new KeyBoard();
-            board.getGameLevel().createMapLevel(1);
+    public void initNewGame() throws FileNotFoundException {
+        board = new Board();
+        keyBoard = new KeyBoard();
+        board.getGameLevel().createMapLevel(board.getLevel());
     }
 
-    public void createTextScene () {
+    public void createTextScene() {
         Text textS = new Text(30, 35, "Score: ");
-        Text textT = new Text(300, 35, "Time: ");
+        Text textT = new Text(230, 35, "Time: ");
 
         textS.setFill(Color.WHITE);
         textS.setFont(new Font(20));
@@ -119,14 +147,35 @@ public class BombermanGame extends Application {
 
         textList.add(textScore);
 
-        textTime = new Text(400, 35, String.valueOf(board.countDownTime / 60));
+        textTime = new Text(290, 35, String.valueOf(board.countDownTime / 60));
         textTime.setFill(Color.WHITE);
         textTime.setFont(new Font(20));
 
         textList.add(textTime);
+
+        Text textL = new Text(600, 35, "Level: ");
+        textL.setFill(Color.WHITE);
+        textL.setFont(new Font(20));
+        textList.add(textL);
+
+        textLevel = new Text(670, 35, String.valueOf(board.getLevel()));
+        textLevel.setFill(Color.WHITE);
+        textLevel.setFont(new Font(20));
+        textList.add(textLevel);
+
+        Text textLeft = new Text(400, 35, "Left: ");
+        textLeft.setFill(Color.WHITE);
+        textLeft.setFont(new Font(20));
+        textList.add(textLeft);
+
+        playerHealth = new Text(450, 35, String.valueOf(board.getPlayer().getHealth()));
+        playerHealth.setFill(Color.WHITE);
+        playerHealth.setFont(new Font(20));
+        textList.add(playerHealth);
+
     }
 
-    public void initializeStage () {
+    public void initializeStage() {
         canvas = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2));
         gc = canvas.getGraphicsContext2D();
 
@@ -134,7 +183,6 @@ public class BombermanGame extends Application {
         Canvas canvasForPlayer = new Canvas(Sprite.SCALED_SIZE * Board.WIDTH, Sprite.SCALED_SIZE * (Board.HEIGHT + 2));
         gcForPlayer = canvasForPlayer.getGraphicsContext2D();
 
-        createTextScene();
         Group gameRoot = new Group();
         gameRoot.getChildren().add(canvas);
         gameRoot.getChildren().add(canvasForPlayer);
@@ -145,23 +193,24 @@ public class BombermanGame extends Application {
 
     }
 
-    public void update () {
+    public void update() {
+        playerHealth.setText(String.valueOf(board.getPlayer().getHealth()));
+        textLevel.setText(String.valueOf(board.getLevel()));
         textScore.setText(String.valueOf(board.score));
         textTime.setText(String.valueOf(board.countDown() / 60));
     }
 
 
-
     private void createMenu() {
         menuPane = new AnchorPane();
-        menuScene = new Scene(menuPane, MENU_WIDTH, MENU_HEIGHT, Color.BLACK);
+        menuScene = new Scene(menuPane, MENU_WIDTH, MENU_HEIGHT);
         menuStage = new Stage();
         menuStage.setScene(menuScene);
         createBackGround();
         createStartButton();
     }
 
-    private void createStartButton () {
+    private void createStartButton() {
         InputStream input = getClass().getResourceAsStream("/button/start.png");
 
         javafx.scene.image.Image image = new Image(input);
@@ -175,7 +224,7 @@ public class BombermanGame extends Application {
 
     }
 
-    private void createBackGround () {
+    private void createBackGround() {
         Image back = new Image("/background/bomba.png", MENU_WIDTH, MENU_HEIGHT, false, true);
         BackgroundImage backMenu = new BackgroundImage(back, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
         menuPane.setBackground(new Background(backMenu));

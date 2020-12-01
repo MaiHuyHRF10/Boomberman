@@ -5,14 +5,15 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.BombermanGame;
 
-public class WallPass extends Item {
-    //private int timeActive = 600;
+public class Detonator extends Item {
+
+    private int timeActive = 600;
 
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    public WallPass(double x, double y, Image img) {
+    public Detonator(double x, double y, Image img) {
         super(x, y, img);
         remove = false;
     }
@@ -22,7 +23,9 @@ public class WallPass extends Item {
 
         if (active) {
             remove = true;
-            Board.wallPass = true;
+            int left = Board.getPlayer().getHealth();
+            Board.getPlayer().setHealth(left + 1);
+            Board.getPlayer().updateStatus();
             BombermanGame.board.removeEntityAt(this.x, this.y);
         }
     }

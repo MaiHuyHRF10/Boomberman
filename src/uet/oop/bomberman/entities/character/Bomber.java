@@ -36,6 +36,8 @@ public class Bomber extends movingObj {
     private int health;
     private boolean win = false;
     private boolean die = false;
+    private boolean noDie = false;
+    private int timeNoDie = 5 * 60;
     private List<Bomb> bombs = new ArrayList<>();
 
 
@@ -138,6 +140,13 @@ public class Bomber extends movingObj {
     @Override
     public void update() {
         collide();
+        if (noDie) {
+            timeNoDie --;
+            if (timeNoDie == 0) {
+                noDie = false;
+                timeNoDie = 5 * 60;
+            }
+        }
         for (int i = 0; i< bombs.size(); i++) {
             updateWallFromBomb(bombs.get(i));
             bombs.get(i).update();
@@ -170,8 +179,8 @@ public class Bomber extends movingObj {
                 } else {
                     this.x = 1;
                     this.y = 1;
+                    noDie = true;
                     this.setImg(Sprite.player_right.getFxImage());
-                    //BombermanGame.board.removeEntityAt(this.x , this. y);
                     alive = true;
                     time = 0;
                 }
@@ -182,7 +191,13 @@ public class Bomber extends movingObj {
 
     @Override
     public void render(GraphicsContext gc) {
-        super.render(gc);
+        if (!noDie) {
+            super.render(gc);
+        } else {
+            if (Board.countDownTime % 4 == 0 || Board.countDownTime % 4 == 1) {
+                super.render(gc);
+            }
+        }
         for (Bomb bomb : bombs) {
             bomb.render(gc);
         }
@@ -493,7 +508,7 @@ public class Bomber extends movingObj {
     }
 
     public void collideToDie(Entity obj) {
-        if (alive) {
+        if (alive && !noDie) {
             HashSet<String> maskPlayer1 = getMask(this);
             HashSet<String> maskPlayer2 = getMask(obj);
             int size = maskPlayer2.size();

@@ -33,6 +33,7 @@ public class BombermanGame extends Application {
     public static Canvas canvas;
     public static GraphicsContext gcForPlayer;
     public static Scene gameScene;
+
     private java.util.List<Text> textList = new ArrayList<>();
 
     public static Board board;
@@ -47,6 +48,7 @@ public class BombermanGame extends Application {
     private AnchorPane menuPane;
     private Scene menuScene;
     private Stage menuStage;
+    private Button continueButton;
     private Button startButton;
 
 
@@ -107,14 +109,68 @@ public class BombermanGame extends Application {
 
             }
         });
+        continueButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton().equals(MouseButton.PRIMARY)) {
+                    try {
+                        initContinueGame();
+                        createTextScene();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    initializeStage();
+                    finalStage.setScene(gameScene);
+                    finalStage.show();
+
+                    AnimationTimer timer = new AnimationTimer() {
+                        @Override
+                        public void handle(long l) {
+                            update();
+                            board.render();
+                            board.update();
+                            if (Board.getPlayer().isDie()  || Board.countDownTime < 0) {
+                                String res = "Game Over !!!";
+                                endGame(res);
+                                finalStage.setScene(gameScene);
+                            }
+                            if (Board.getPlayer().isWin()) {
+                                Board.scorePrevious = 0;
+                                BombermanGame.board.setLevel(1);
+                                Board.getPlayer().setHealth(3);
+                                Board.getPlayer().updateStatus();
+                                String res = "YOU WIN !!!";
+                                endGame(res);
+                                finalStage.setScene(gameScene);
+                            }
+                        }
+                    };
+
+                    timer.start();
+
+                    keyBoard.status(gameScene); // bat su kien
+                    Sound.play("ghost");
+                    board.countDown();
+                }
+
+            }
+        });
 
     }
 
+    public void initContinueGame() throws FileNotFoundException{
+        board = new Board();
+        keyBoard = new KeyBoard();
+        board.getGameLevel().createMapLevel(board.getLevel());
+    }
 
     public void initNewGame() throws FileNotFoundException {
         board = new Board();
         keyBoard = new KeyBoard();
-        board.getGameLevel().createMapLevel(board.getLevel());
+        Board.score = 0;
+        Board.getPlayer().setHealth(3);
+        board.setLevel(1);
+        board.getGameLevel().createMapLevel(1);
     }
 
     public void createTextScene() {
@@ -196,7 +252,22 @@ public class BombermanGame extends Application {
         menuStage = new Stage();
         menuStage.setScene(menuScene);
         createBackGround();
+        createContinueButton();
         createStartButton();
+    }
+
+    private void createContinueButton() {
+        InputStream input = getClass().getResourceAsStream("/button/continue.png");
+
+        javafx.scene.image.Image image = new Image(input);
+        ImageView imageView = new ImageView(image);
+        continueButton = new Button("", imageView);
+        continueButton.setStyle("-fx-background-color: #000000; ");
+
+        menuPane.getChildren().add(continueButton);
+        continueButton.setLayoutX(430);
+        continueButton.setLayoutY(400);
+
     }
 
     private void createStartButton() {
@@ -208,9 +279,8 @@ public class BombermanGame extends Application {
         startButton.setStyle("-fx-background-color: #000000; ");
 
         menuPane.getChildren().add(startButton);
-        startButton.setLayoutX(450);
+        startButton.setLayoutX(430);
         startButton.setLayoutY(350);
-
     }
 
     private void createBackGround() {
